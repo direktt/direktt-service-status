@@ -202,6 +202,13 @@ function direktt_save_service_case_post( $post_id ) {
         update_post_meta( $post_id, '_dss_direktt_user_post_id', $user_post_id );
     }
 
+    $temp_transient = get_transient( 'dss_temp_id_transient' );
+    if ( $temp_transient ) {
+        $user_post_id = $temp_transient;
+        update_post_meta( $post_id, '_dss_direktt_user_post_id', $user_post_id );
+        delete_transient( 'dss_temp_id_transient' );
+    }
+
     $case_opened_flag = get_post_meta( $post_id, '_dss_case_opened_flag', true );
     if ( empty( $case_opened_flag ) && ! empty( $user_post_id ) ) {
         $user_post_id = get_post_meta( $post_id, '_dss_direktt_user_post_id', true );
@@ -220,15 +227,18 @@ function direktt_save_service_case_post( $post_id ) {
                 "date-time" => current_time( 'mysql' ),
             ]
         );
-        update_post_meta( $post_id, '_dss_case_opened_flag', true );
+        update_post_meta( $post_id, '_dss_case_opened_flag', "1" );
 
         $user_id = get_current_user_id();
+        global $direktt_user;
         $log = get_post_meta( $post_id, 'direktt_service_status_change_log', true ) ?: [];
-        $log[] = array(
-            'type' => 'created',
-            'user_id' => $user_id,
-            'date' => current_time( 'mysql' ),
-        );
+        if ( empty( $log ) ) {
+            $log[] = array(
+                'type' => 'created',
+                'user_id' => $user_id,
+                'date' => current_time( 'mysql' ),
+            );
+        }
         update_post_meta( $post_id, 'direktt_service_status_change_log', $log );
     }
 
@@ -337,6 +347,7 @@ function direktt_log_case_status_change( $object_id, $terms, $tt_ids, $taxonomy,
     }
 
     $user_id = get_current_user_id();
+    global $direktt_user;
 
     $old_term = isset( $old_tt_ids[0] ) ? $old_tt_ids[0] : null;
 
@@ -597,18 +608,16 @@ function render_service_status_profile_tool() {
                 'post_status'  => 'publish',
                 'post_type'    => 'direktt_service_case',
             );
+            set_transient( 'dss_temp_id_transient', $subscription_id, 30 );
             $case_id = wp_insert_post( $new_case );
 
             if ( ! is_wp_error( $case_id ) ) {
-                // Save user post ID meta
-                update_post_meta( $case_id, '_dss_direktt_user_post_id', $subscription_id );
-
                 // Set initial case status
                 wp_set_object_terms( $case_id, [ $case_status ], 'case_status', false );
 
                 $post = get_post( $case_id );
 
-                $case_opened_flag = get_post_meta( $post_id, '_dss_case_opened_flag', true );
+                $case_opened_flag = get_post_meta( $case_id, '_dss_case_opened_flag', true );
                 if ( empty( $case_opened_flag ) ) {
                     $new_case_template = intval( get_option( 'direktt_service_status_new_case_template', 0 ) );
                     Direktt_Message::send_message_template(
@@ -619,16 +628,19 @@ function render_service_status_profile_tool() {
                             "date-time" => current_time( 'mysql' ),
                         ]
                     );
-                    update_post_meta( $post_id, '_dss_case_opened_flag', true );
+                    update_post_meta( $case_id, '_dss_case_opened_flag', "1" );
                 }
 
                 $user_id = get_current_user_id();
+                global $direktt_user;
                 $log = get_post_meta( $case_id, 'direktt_service_status_change_log', true ) ?: [];
-                $log[] = array(
-                    'type' => 'created',
-                    'user_id' => $user_id,
-                    'date' => current_time( 'mysql' ),
-                );
+                if ( empty( $log ) ) {
+                    $log[] = array(
+                        'type' => 'created',
+                        'user_id' => $user_id,
+                        'date' => current_time( 'mysql' ),
+                    );
+                }
                 update_post_meta( $case_id, 'direktt_service_status_change_log', $log );
 
                 set_transient( 'direktt_service_status_message', 'Service case added successfully.', 30 ); // Message lasts for 30 seconds
@@ -695,12 +707,12 @@ function render_service_status_profile_tool() {
             $id = get_post_meta( $case_post->ID, '_dss_direktt_user_post_id', true );
             if ( ! empty( $id ) ) {
                 if ( strlen( $id ) > 6 ) {
-                    $subscription_id = $id;
+                    $temp_id = $id;
                 } else {
                     $profile_user = Direktt_User::get_user_by_membership_id( $id );
-                    $subscription_id = $profile_user['direktt_user_id'];
+                    $temp_id = $profile_user['direktt_user_id'];
                 }
-                if ( $subscription_id === $id ) {
+                if ( $subscription_id === $temp_id ) {
                     $case_list[] = $case_post->ID;
                 }
             }
@@ -828,7 +840,8 @@ function render_service_status_profile_tool() {
                 $( '#case-form-number' ).val( '' );
                 $( '#case-form-number' ).prop( 'disabled', false );
                 $( '#case-form-description' ).val( '' );
-                $( '##search_query' ).val( '' );
+                $( '#search_query' ).val( '' );
+                $( '.form-log-list' ).empty();
                 $( '#case-form-status' ).val( <?php echo esc_js( $opening_status ); ?> );
             });
 
@@ -862,7 +875,7 @@ function render_service_status_profile_tool() {
                             $( '#case-form-number' ).prop( 'disabled', true );
                             $( '#case-form-description' ).val( caseData.description );
                             $( '#case-form-status' ).val( caseData.status );
-                            $('.form-log-list').empty(); // Clear existing log entries
+                            $( '.form-log-list' ).empty();
                             caseData.log.forEach(function(entry) {
                                 var logEntry = '';
                                 if (entry.type === 'changed') {
@@ -876,7 +889,7 @@ function render_service_status_profile_tool() {
                                         'Case created on: ' + entry.date + ', by <strong>' + entry.user_name + '</strong>.' +
                                         '</li>';
                                 }
-                                $('.form-log-list').append(logEntry);
+                                $( '.form-log-list' ).append(logEntry);
                             });
                             $( '#save-case-form' ).data( 'action', 'edit' );
                         } else {
@@ -912,7 +925,7 @@ function render_service_status_profile_tool() {
                             $('#case-form-number').val(caseData.title).prop('disabled', true);
                             $('#case-form-description').val(caseData.description);
                             $('#case-form-status').val(caseData.status);
-                            $('.form-log-list').empty(); // Clear existing log entries
+                            $( '.form-log-list' ).empty();
                             caseData.log.forEach(function(entry) {
                                 var logEntry = '';
                                 if (entry.type === 'changed') {
@@ -926,7 +939,7 @@ function render_service_status_profile_tool() {
                                         'Case created on: ' + entry.date + ', by <strong>' + entry.user_name + '</strong>.' +
                                         '</li>';
                                 }
-                                $('.form-log-list').append(logEntry);
+                                $( '.form-log-list' ).append( logEntry );
                             });
                             $('#save-case-form').data('action', 'edit');
                         } else {
@@ -947,6 +960,8 @@ function render_service_status_profile_tool() {
 
             $( document ).on( 'focus', '#search_query', function() {
                 var $el = $( this );
+                console.log( case_list );
+                console.log( $el );
                 if ( !$el.data( 'ui-autocomplete' ) ) {
                     $el.autocomplete({ source: case_list });
                 }
@@ -1208,7 +1223,7 @@ function direktt_add_service_case_shortcode() {
     $assigned_tags       = wp_get_post_terms( $post_id, 'direkttusertags', array( 'fields' => 'ids' ) );
     $categories = intval( get_option( 'direktt_service_status_categories', 0 ) );
     $tags = intval( get_option( 'direktt_service_status_tags', 0 ) );
-    $eligible = ! Direktt_User::is_direktt_admin() || in_array( $categories, $assigned_categories ) || in_array( $tags, $assigned_tags );
+    $eligible = Direktt_User::is_direktt_admin() || in_array( $categories, $assigned_categories ) || in_array( $tags, $assigned_tags );
     $status_options = direktt_service_status_get_status_list();
     $opening_status = intval( get_option( 'direktt_service_status_opening_status', 0 ) );
     $closing_status = intval( get_option( 'direktt_service_status_closing_status', 0 ) );
@@ -1230,24 +1245,22 @@ function direktt_add_service_case_shortcode() {
                     'post_status'  => 'publish',
                     'post_type'    => 'direktt_service_case',
                 );
+                if ( strlen( $case_user_id ) > 6 ) {
+                    $user_subscription_id = $case_user_id;
+                } else {
+                    $profile_user = Direktt_User::get_user_by_membership_id( $case_user_id );
+                    $user_subscription_id = $profile_user['direktt_user_id'];
+                }
+                set_transient( 'dss_temp_id_transient', $user_subscription_id, 30 );
                 $case_id = wp_insert_post( $new_case );
 
                 if ( ! is_wp_error( $case_id ) ) {
-                    // Save user post ID meta
-                    if ( strlen( $case_user_id ) > 6 ) {
-                        $user_subscription_id = $case_user_id;
-                    } else {
-                        $profile_user = Direktt_User::get_user_by_membership_id( $case_user_id );
-                        $user_subscription_id = $profile_user['direktt_user_id'];
-                    }
-                    update_post_meta( $case_id, '_dss_direktt_user_post_id', $case_user_id );
-
                     // Set initial case status
                     wp_set_object_terms( $case_id, [ $case_status ], 'case_status', false );
 
                     $post = get_post( $case_id );
 
-                    $case_opened_flag = get_post_meta( $post_id, '_dss_case_opened_flag', true );
+                    $case_opened_flag = get_post_meta( $case_id, '_dss_case_opened_flag', true );
                     if ( empty( $case_opened_flag ) ) {
                         $new_case_template = intval( get_option( 'direktt_service_status_new_case_template', 0 ) );
                         Direktt_Message::send_message_template(
@@ -1258,16 +1271,19 @@ function direktt_add_service_case_shortcode() {
                                 "date-time" => current_time( 'mysql' ),
                             ]
                         );
-                        update_post_meta( $post_id, '_dss_case_opened_flag', true );
+                        update_post_meta( $case_id, '_dss_case_opened_flag', "1" );
                     }
 
                     $user_id = get_current_user_id();
+                    global $direktt_user;
                     $log = get_post_meta( $case_id, 'direktt_service_status_change_log', true ) ?: [];
-                    $log[] = array(
-                        'type' => 'created',
-                        'user_id' => $user_id,
-                        'date' => current_time( 'mysql' ),
-                    );
+                    if ( empty( $log ) ) {
+                        $log[] = array(
+                            'type' => 'created',
+                            'user_id' => $user_id,
+                            'date' => current_time( 'mysql' ),
+                        );
+                    }
                     update_post_meta( $case_id, 'direktt_service_status_change_log', $log );
 
                     set_transient( 'direktt_service_status_message', 'Service case added successfully.', 30 ); // Message lasts for 30 seconds
@@ -1464,9 +1480,11 @@ function direktt_add_service_case_shortcode() {
                     $( '.direktt-service-status-wrapper' ).show();
                     $( '#case-form-number' ).val( '' );
                     $( '#case-form-number' ).prop( 'disabled', false );
+                    $( '#case-form-user-id' ).val( '' );
                     $( '#case-form-user-id' ).prop( 'disabled', false );
                     $( '#case-form-description' ).val( '' );
-                    $( '##search_query' ).val( '' );
+                    $( '#search_query' ).val( '' );
+                    $( '.form-log-list' ).empty();
                     $( '#case-form-status' ).val( <?php echo esc_js( $opening_status ); ?> );
                 });
 
@@ -1502,7 +1520,7 @@ function direktt_add_service_case_shortcode() {
                                 $( '#case-form-user-id' ).prop( 'disabled', true );
                                 $( '#case-form-description' ).val( caseData.description );
                                 $( '#case-form-status' ).val( caseData.status );
-                                $('.form-log-list').empty(); // Clear existing log entries
+                                $( '.form-log-list' ).empty(); // Clear existing log entries
                                 caseData.log.forEach(function(entry) {
                                     var logEntry = '';
                                     if (entry.type === 'changed') {
@@ -1516,7 +1534,7 @@ function direktt_add_service_case_shortcode() {
                                             'Case created on: ' + entry.date + ', by <strong>' + entry.user_name + '</strong>.' +
                                             '</li>';
                                     }
-                                    $('.form-log-list').append(logEntry);
+                                    $( '.form-log-list' ).append( logEntry );
                                 });
                                 $( '#save-case-form' ).data( 'action', 'edit' );
                             } else {
@@ -1554,7 +1572,7 @@ function direktt_add_service_case_shortcode() {
                                 $( '#case-form-user-id' ).prop( 'disabled', true );
                                 $( '#case-form-description').val( caseData.description );
                                 $( '#case-form-status').val( caseData.status );
-                                $( '.form-log-list').empty(); // Clear existing log entries
+                                $( '.form-log-list' ).empty(); // Clear existing log entries
                                 caseData.log.forEach(function(entry) {
                                     var logEntry = '';
                                     if (entry.type === 'changed') {
@@ -1568,7 +1586,7 @@ function direktt_add_service_case_shortcode() {
                                             'Case created on: ' + entry.date + ', by <strong>' + entry.user_name + '</strong>.' +
                                             '</li>';
                                     }
-                                    $('.form-log-list').append(logEntry);
+                                    $( '.form-log-list' ).append( logEntry );
                                 });
                                 $('#save-case-form').data('action', 'edit');
                             } else {
@@ -1595,7 +1613,7 @@ function direktt_add_service_case_shortcode() {
                 });
 
                 // bind on focus so this works even if the metabox is added after DOM ready (Gutenberg)
-                $( document ).on( 'focus', '#dss_direktt_user_post_id_input', function() {
+                $( document ).on( 'focus', '#case-form-user-id', function() {
                     var $el = $( this );
                     if ( !$el.data( 'ui-autocomplete' ) ) {
                         $el.autocomplete({ source: ids });
