@@ -1779,23 +1779,19 @@ function direktt_add_service_case_shortcode() {
         </div>
         <?php
     }
-    ?>
-    <script>
-        jQuery( function( $ ) {
-            <?php
-            if ( $eligible ) {
-                ?>
+    if ( $eligible ) {
+        ?>
+        <script>
+            jQuery( function( $ ) {
                 $( '#go-back' ).on( 'click', function() {
                     event.preventDefault();
                     $( '.my-cases' ).hide();
                     $( '.direktt-service-status' ).show();
                 });
-                <?php
-            }
-            ?>
-        });
-    </script>
-    <?php
+            });
+        </script>
+        <?php
+    }
     $my_case_list = [];
 
     $my_case_list_posts = get_posts([
