@@ -1,6 +1,6 @@
 jQuery( document ).ready( function( $ ) { "use strict";
     $( '#publish' ).on( 'click', function( e ) {
-        var id = $( '#dss_direktt_user_post_id_input' ).val();
+        var id = $( '#dss_direktt_subscription_id_input' ).val();
         console.log( id );
         var ids = $( '#dss_all_ids' ).val();
         ids = JSON.parse(ids);
