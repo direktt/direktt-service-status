@@ -1091,11 +1091,12 @@ function render_service_status_profile_tool()
             </div>
             <div class="direktt-service-status-cases-list">
                 <?php
-                if (! empty($case_list)) {
-                    foreach ($case_list as $case_id) {
-                        $case = get_post($case_id);
-                        $case_status = ($case_status_terms && ! is_wp_error($case_status_terms)) ? $case_status_terms[0]->name : 'No Status';
-                ?>
+                if ( ! empty( $case_list ) ) {
+                    foreach ( $case_list as $case_id ) {
+                        $case = get_post( $case_id );
+                        $case_status_terms = get_the_terms( $case->ID, 'case_status' );
+                        $case_status = ( $case_status_terms && ! is_wp_error( $case_status_terms ) ) ? $case_status_terms[0]->name : 'No Status';
+                        ?> 
                         <div class="case-item">
                             <h3><strong><?php echo esc_html__('Case number:', 'direktt-service-status'); ?> </strong><?php echo esc_html($case->post_title); ?></h3>
                             <div class="direktt-service-status-description"><strong><?php echo esc_html__('Description:', 'direktt-service-status'); ?> </strong><?php echo esc_html(wp_trim_words($case->post_content, 10, '...') ?: '/'); ?></div>
