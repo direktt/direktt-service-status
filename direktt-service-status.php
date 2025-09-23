@@ -169,7 +169,7 @@ function dss_direktt_service_status_change_log_meta_box_callback($post)
 	$log = array_reverse( $log );
 
     if (! empty($log) && is_array($log)) {
-		echo '<table class="widefat fixed">';
+		echo '<table class="widefat">';
 		echo '<thead>';
 			echo '<tr>';
 				echo '<th>';
@@ -1167,7 +1167,7 @@ function render_service_status_profile_tool()
 								echo '</table>';
 							}
 							?>
-							<button class="edit_case" data-case-id="<?php echo esc_attr($case_id); ?>"><?php echo esc_html__('Edit Case', 'direktt-service-status'); ?></button>		
+							<button class="edit_case button-primary" data-case-id="<?php echo esc_attr($case_id); ?>"><?php echo esc_html__('Edit Case', 'direktt-service-status'); ?></button>		
                         </div>
                     <?php
                     }
@@ -1205,8 +1205,8 @@ function render_service_status_profile_tool()
                     </div>
                     <div class="form-log-list"></div>
                     <div class="form-buttons">
-                        <button id="save-case-form" class="button"><?php echo esc_html__('Save Service Case', 'direktt-service-status'); ?></button>
-                        <button id="cancel-case-form" class="button-invert"><?php echo esc_html__('Cancel', 'direktt-service-status'); ?></button>
+                        <button id="save-case-form" class="button button-primary"><?php echo esc_html__('Save Service Case', 'direktt-service-status'); ?></button>
+                        <button id="cancel-case-form" class="button-invert button-red"><?php echo esc_html__('Cancel', 'direktt-service-status'); ?></button>
                     </div>
                     <input type="hidden" id="case-form-id" value="" />
                 </form>
