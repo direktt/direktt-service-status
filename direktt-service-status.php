@@ -1009,6 +1009,7 @@ function render_service_status_profile_tool() {
                 if ( ! empty( $case_list ) ) {
                     foreach ( $case_list as $case_id ) {
                         $case = get_post( $case_id );
+                        $case_status_terms = get_the_terms( $case->ID, 'case_status' );
                         $case_status = ( $case_status_terms && ! is_wp_error( $case_status_terms ) ) ? $case_status_terms[0]->name : 'No Status';
                         ?> 
                         <div class="case-item">
