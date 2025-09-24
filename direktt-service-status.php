@@ -973,7 +973,16 @@ function render_service_status_profile_tool()
 							var logEntry = '<table>';
 								logEntry += '<thead>';
 									logEntry += '<th>';
-										logEntry += 'Log';
+										logEntry += 'User';
+									logEntry += '</th>';
+									logEntry += '<th>';
+										logEntry += 'Time';
+									logEntry += '</th>';
+									logEntry += '<th>';
+										logEntry += 'From';
+									logEntry += '</th>';
+									logEntry += '<th>';
+										logEntry += 'To';
 									logEntry += '</th>';
 								logEntry += '</thead>';
 								logEntry += '<tbody>';
@@ -982,13 +991,32 @@ function render_service_status_profile_tool()
 									if (entry.type === 'changed') {
 										var oldTerm = entry.old_term ? entry.old_term : 'None';
 										var newTerm = entry.new_term ? entry.new_term : 'None';
-										logEntry += '<tr><td>' +
-											'On ' + entry.date + ', <strong>' + entry.user_name + '</strong> changed status from <strong>' + oldTerm + '</strong> to <strong>' + newTerm + '</strong>.' +
-											'</td></tr>';
+										logEntry += '<tr>';
+											logEntry += '<td>';
+												logEntry += entry.user_name;
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += entry.date;
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += oldTerm;
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += newTerm;
+											logEntry += '</td>';
+										logEntry += '</tr>';
 									} else if (entry.type === 'created') {
-										logEntry += '<tr><td>' +
-											'Case created on ' + entry.date + ', by <strong>' + entry.user_name + '</strong>.' +
-											'</td></tr>';
+										logEntry += '<tr>';
+											logEntry += '<td>';
+												logEntry += entry.user_name;
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += entry.date;
+											logEntry += '</td>';
+											logEntry += '<td colspan="2">';
+												logEntry += 'Case created';
+											logEntry += '</td>';
+										logEntry += '</tr>';
 									}
 								});
 								logEntry += '</tbody>';
@@ -1029,24 +1057,53 @@ function render_service_status_profile_tool()
                             $('#case-form-description').val(caseData.description);
                             $('#case-form-status').val(caseData.status);
                             $('.form-log-list').empty();
-                            var logEntry = '<table>';
+							var logEntry = '<table>';
 								logEntry += '<thead>';
 									logEntry += '<th>';
-										logEntry += 'Log';
+										logEntry += 'User';
+									logEntry += '</th>';
+									logEntry += '<th>';
+										logEntry += 'Time';
+									logEntry += '</th>';
+									logEntry += '<th>';
+										logEntry += 'From';
+									logEntry += '</th>';
+									logEntry += '<th>';
+										logEntry += 'To';
 									logEntry += '</th>';
 								logEntry += '</thead>';
 								logEntry += '<tbody>';
 								caseData.log.forEach(function(entry) {
+									// var logEntry = '';
 									if (entry.type === 'changed') {
 										var oldTerm = entry.old_term ? entry.old_term : 'None';
 										var newTerm = entry.new_term ? entry.new_term : 'None';
-										logEntry += '<tr><td>' +
-											'On ' + entry.date + ', <strong>' + entry.user_name + '</strong> changed status from <strong>' + oldTerm + '</strong> to <strong>' + newTerm + '</strong>.' +
-											'</td></tr>';
+										logEntry += '<tr>';
+											logEntry += '<td>';
+												logEntry += entry.user_name;
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += entry.date;
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += oldTerm;
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += newTerm;
+											logEntry += '</td>';
+										logEntry += '</tr>';
 									} else if (entry.type === 'created') {
-										logEntry += '<tr><td>' +
-											'Case created on ' + entry.date + ', by <strong>' + entry.user_name + '</strong>.' +
-											'</td></tr>';
+										logEntry += '<tr>';
+											logEntry += '<td>';
+												logEntry += entry.user_name;
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += entry.date;
+											logEntry += '</td>';
+											logEntry += '<td colspan="2">';
+												logEntry += 'Case created';
+											logEntry += '</td>';
+										logEntry += '</tr>';
 									}
 								});
 								logEntry += '</tbody>';
@@ -1098,7 +1155,7 @@ function render_service_status_profile_tool()
                         $case_status = ( $case_status_terms && ! is_wp_error( $case_status_terms ) ) ? $case_status_terms[0]->name : 'No Status';
                         ?> 
                         <div class="case-item">
-                            <h3><strong><?php echo esc_html__('Case number:', 'direktt-service-status'); ?> </strong><?php echo esc_html($case->post_title); ?></h3>
+                            <h3><?php echo esc_html($case->post_title); ?></h3>
                             <div class="direktt-service-status-description"><strong><?php echo esc_html__('Description:', 'direktt-service-status'); ?> </strong><?php echo esc_html(wp_trim_words($case->post_content, 10, '...') ?: '/'); ?></div>
                             <div class="direktt-service-status-status"><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($case_status); ?></div>
 							<?php
@@ -1127,7 +1184,7 @@ function render_service_status_profile_tool()
 										$user_id = $entry['user_id'];
 										$direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
 										if ($direktt_user) {
-											$user_name = $direktt_user['direktt_display_name'] . " <br><i>($user_id)</i>";
+											$user_name = $direktt_user['direktt_display_name'] . " <br/><i>($user_id)</i>";
 										} else {
 											$user_info = get_userdata($user_id);
 											$user_name = $user_info ? $user_info->user_login : 'Unknown User';
@@ -1203,11 +1260,12 @@ function render_service_status_profile_tool()
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="form-log-list"></div>
                     <div class="form-buttons">
                         <button id="save-case-form" class="button button-primary"><?php echo esc_html__('Save Service Case', 'direktt-service-status'); ?></button>
-                        <button id="cancel-case-form" class="button-invert button-red"><?php echo esc_html__('Cancel', 'direktt-service-status'); ?></button>
+                        <button id="cancel-case-form" class="button-invert button-dark-gray"><?php echo esc_html__('Cancel', 'direktt-service-status'); ?></button>
                     </div>
+					<h3>Activity log</h3>
+                    <div class="form-log-list"></div>
                     <input type="hidden" id="case-form-id" value="" />
                 </form>
             </div>
@@ -1262,8 +1320,9 @@ function handle_direktt_search_service_cases()
     ];
 
     $cases = get_posts($args);
+	$cases = array_reverse( $cases );
 
-    if (empty($cases)) {
+    if ( empty( $cases ) ) {
         wp_send_json_error(esc_html__('No service case found.', 'direktt-service-status'));
         wp_die();
     }
@@ -1286,7 +1345,7 @@ function handle_direktt_search_service_cases()
         $user_id = $entry['user_id'];
         $direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
         if ($direktt_user) {
-            $user_name = $direktt_user['direktt_display_name'] . " ($user_id)";
+            $user_name = $direktt_user['direktt_display_name'] . "<br/><i>($user_id)</i>";
         } else {
             $user_info = get_userdata($user_id);
             $user_name = $user_info ? $user_info->user_login : 'Unknown User';
@@ -1343,13 +1402,13 @@ function handle_direktt_search_service_cases_id()
     $case_status_terms = get_the_terms($case->ID, 'case_status');
     $case_status_id = ($case_status_terms && ! is_wp_error($case_status_terms)) ? $case_status_terms[0]->term_id : 0;
     $log = get_post_meta($case->ID, 'direktt_service_status_change_log', true) ?: [];
-	$log = array_reverse( $log );
+	// $log = array_reverse( $log );
     $log_entries = [];
     foreach ($log as $entry) {
         $user_id = $entry['user_id'];
         $direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
         if ($direktt_user) {
-            $user_name = $direktt_user['direktt_display_name'] . " ($user_id)";
+            $user_name = $direktt_user['direktt_display_name'] . "<br/><i>($user_id)</i>";
         } else {
             $user_info = get_userdata($user_id);
             $user_name = $user_info ? $user_info->user_login : 'Unknown User';
@@ -1704,13 +1763,32 @@ function direktt_add_service_case_shortcode()
 										if (entry.type === 'changed') {
 											var oldTerm = entry.old_term ? entry.old_term : 'None';
 											var newTerm = entry.new_term ? entry.new_term : 'None';
-											logEntry += '<tr><td>' +
-												'On ' + entry.date + ', <strong>' + entry.user_name + '</strong> changed status from <strong>' + oldTerm + '</strong> to <strong>' + newTerm + '</strong>.' +
-												'</td></tr>';
+											logEntry += '<tr>';
+												logEntry += '<td>';
+													logEntry += entry.user_name;
+												logEntry += '</td>';
+												logEntry += '<td>';
+													logEntry += entry.date;
+												logEntry += '</td>';
+												logEntry += '<td>';
+													logEntry += oldTerm;
+												logEntry += '</td>';
+												logEntry += '<td>';
+													logEntry += newTerm;
+												logEntry += '</td>';
+											logEntry += '</tr>';
 										} else if (entry.type === 'created') {
-											logEntry += '<tr><td>' +
-												'Case created on ' + entry.date + ', by <strong>' + entry.user_name + '</strong>.' +
-												'</td></tr>';
+											logEntry += '<tr>';
+												logEntry += '<td>';
+													logEntry += entry.user_name;
+												logEntry += '</td>';
+												logEntry += '<td>';
+													logEntry += entry.date;
+												logEntry += '</td>';
+												logEntry += '<td colspan="2">';
+													logEntry += 'Case created';
+												logEntry += '</td>';
+											logEntry += '</tr>';
 										}
 									});
 									logEntry += '</tbody>';
@@ -1754,28 +1832,56 @@ function direktt_add_service_case_shortcode()
                                 $('#case-form-status').val(caseData.status);
                                 $('.form-log-list').empty();
 								var logEntry = '<table>';
-									logEntry += '<thead>';
-										logEntry += '<th>';
-											logEntry += 'Log';
-										logEntry += '</th>';
-									logEntry += '</thead>';
-									logEntry += '<tbody>';
-									caseData.log.forEach(function(entry) {
-										// var logEntry = '';
-										if (entry.type === 'changed') {
-											var oldTerm = entry.old_term ? entry.old_term : 'None';
-											var newTerm = entry.new_term ? entry.new_term : 'None';
-											logEntry += '<tr><td>' +
-												'On ' + entry.date + ', <strong>' + entry.user_name + '</strong> changed status from <strong>' + oldTerm + '</strong> to <strong>' + newTerm + '</strong>.' +
-												'</td></tr>';
-										} else if (entry.type === 'created') {
-											logEntry += '<tr><td>' +
-												'Case created on ' + entry.date + ', by <strong>' + entry.user_name + '</strong>.' +
-												'</td></tr>';
-										}
-									});
-									logEntry += '</tbody>';
-								logEntry += '</table>';
+								logEntry += '<thead>';
+									logEntry += '<th>';
+										logEntry += 'User';
+									logEntry += '</th>';
+									logEntry += '<th>';
+										logEntry += 'Time';
+									logEntry += '</th>';
+									logEntry += '<th>';
+										logEntry += 'From';
+									logEntry += '</th>';
+									logEntry += '<th>';
+										logEntry += 'To';
+									logEntry += '</th>';
+								logEntry += '</thead>';
+								logEntry += '<tbody>';
+								caseData.log.forEach(function(entry) {
+									// var logEntry = '';
+									if (entry.type === 'changed') {
+										var oldTerm = entry.old_term ? entry.old_term : 'None';
+										var newTerm = entry.new_term ? entry.new_term : 'None';
+										logEntry += '<tr>';
+											logEntry += '<td>';
+												logEntry += entry.user_name;
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += entry.date;
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += oldTerm;
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += newTerm;
+											logEntry += '</td>';
+										logEntry += '</tr>';
+									} else if (entry.type === 'created') {
+										logEntry += '<tr>';
+											logEntry += '<td>';
+												logEntry += entry.user_name;
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += entry.date;
+											logEntry += '</td>';
+											logEntry += '<td colspan="2">';
+												logEntry += 'Case created';
+											logEntry += '</td>';
+										logEntry += '</tr>';
+									}
+								});
+								logEntry += '</tbody>';
+							logEntry += '</table>';
                                 $('.form-log-list').append(logEntry);
                                 $('#save-case-form').data('action', 'edit');
                             } else {
@@ -1840,7 +1946,7 @@ function direktt_add_service_case_shortcode()
                     ?>
                             <div class="case-item">
                                 <h3><strong><?php echo esc_html__('User:', 'direktt-service-status'); ?> </strong><?php echo esc_html($display_name) . ' (' . esc_html($case_user_id) . ')'; ?></h3>
-                                <h3><strong><?php echo esc_html__('Case number:', 'direktt-service-status'); ?> </strong><?php echo esc_html($case->post_title); ?></h3>
+                                <h3><?php echo esc_html($case->post_title); ?></h3>
                                 <h3><strong><?php echo esc_html__('Description:', 'direktt-service-status'); ?> </strong><?php echo esc_html(wp_trim_words($case->post_content, 10, '...') ?: '/'); ?></h3>
                                 <h3><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($case_status); ?></h3>
                                 <?php
@@ -2010,7 +2116,7 @@ function direktt_add_service_case_shortcode()
                 $my_case_status = ($my_case_status_terms && ! is_wp_error($my_case_status_terms)) ? $my_case_status_terms[0]->name : 'No Status';
         ?>
                 <div class="my-case-item">
-                    <h3><strong><?php echo esc_html__('Case number:', 'direktt-service-status'); ?> </strong><?php echo esc_html($my_case->post_title); ?></h3>
+                    <h3><?php echo esc_html($my_case->post_title); ?></h3>
                     <h3><strong><?php echo esc_html__('Description:', 'direktt-service-status'); ?> </strong><?php echo esc_html(wp_trim_words($my_case->post_content, 10, '...') ?: '/'); ?></h3>
                     <h3><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($my_case_status); ?></h3>
                     <?php
