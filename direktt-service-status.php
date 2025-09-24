@@ -970,7 +970,7 @@ function render_service_status_profile_tool()
                             $('#case-form-description').val(caseData.description);
                             $('#case-form-status').val(caseData.status);
                             $('.form-log-list').empty();
-							var logEntry = '<table>';
+							var logEntry = '<table class="direktt-service-status-log">';
 								logEntry += '<thead>';
 									logEntry += '<th>';
 										logEntry += 'User';
@@ -1057,7 +1057,7 @@ function render_service_status_profile_tool()
                             $('#case-form-description').val(caseData.description);
                             $('#case-form-status').val(caseData.status);
                             $('.form-log-list').empty();
-							var logEntry = '<table>';
+							var logEntry = '<table class="direktt-service-status-log">';
 								logEntry += '<thead>';
 									logEntry += '<th>';
 										logEntry += 'User';
@@ -1756,7 +1756,7 @@ function direktt_add_service_case_shortcode()
                                 $('#case-form-description').val(caseData.description);
                                 $('#case-form-status').val(caseData.status);
                                 $('.form-log-list').empty();
-								var logEntry = '<table>';
+								var logEntry = '<table class="direktt-service-status-log">';
 									logEntry += '<tbody>';
 									caseData.log.forEach(function(entry) {
 										// var logEntry = '';
@@ -1831,7 +1831,7 @@ function direktt_add_service_case_shortcode()
                                 $('#case-form-description').val(caseData.description);
                                 $('#case-form-status').val(caseData.status);
                                 $('.form-log-list').empty();
-								var logEntry = '<table>';
+								var logEntry = '<table class="direktt-service-status-log">';
 								logEntry += '<thead>';
 									logEntry += '<th>';
 										logEntry += 'User';
