@@ -1439,8 +1439,7 @@ function handle_direktt_search_service_cases_id()
 
 add_shortcode('direktt_service_case', 'direktt_add_service_case_shortcode');
 
-function direktt_add_service_case_shortcode()
-{
+function direktt_add_service_case_shortcode() {
     global $direktt_user;
     if (! $direktt_user) {
         return;
@@ -1459,7 +1458,10 @@ function direktt_add_service_case_shortcode()
     global $enqueue_direktt_case_script;
     $enqueue_direktt_case_script = true;
     ob_start();
-    if ($eligible) {
+	echo '<div id="direktt-profile-wrapper">';
+	echo '<div id="direktt-profile">';
+	echo '<div id="direktt-profile-data" class="direktt-profile-data-service-status-tool direktt-service">';
+    if ( $eligible ) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['direktt_service_status_nonce']) && wp_verify_nonce($_POST['direktt_service_status_nonce'], 'direktt_service_status_action')) {
             if (isset($_POST['add_service_case']) && intval($_POST['add_service_case']) === 1) {
                 $case_number = sanitize_text_field($_POST['case_number']);
@@ -2070,7 +2072,7 @@ function direktt_add_service_case_shortcode()
         </div>
     <?php
     }
-    if ($eligible) {
+    if ( $eligible ) {
     ?>
         <script>
             jQuery(function($) {
@@ -2197,5 +2199,8 @@ function direktt_add_service_case_shortcode()
         ?>
     </div>
 <?php
+	echo '</div>';
+	echo '</div>';
+	echo '</div>';
     return ob_get_clean();
 }
