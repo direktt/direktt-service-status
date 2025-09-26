@@ -2109,7 +2109,7 @@ function direktt_add_service_case_shortcode() {
         }
     }
     ?>
-    <div class="my-cases" style="<?php echo $eligible ? esc_attr('display: none;') : ''; ?>">
+    <div class="direktt-service-status-cases-list my-cases" style="<?php echo $eligible ? esc_attr('display: none;') : ''; ?>">
         <?php
         if (! empty($my_case_list)) {
             foreach ($my_case_list as $my_case_id) {
@@ -2117,7 +2117,7 @@ function direktt_add_service_case_shortcode() {
                 $my_case_status_terms = get_the_terms($my_case_id, 'case_status');
                 $my_case_status = ($my_case_status_terms && ! is_wp_error($my_case_status_terms)) ? $my_case_status_terms[0]->name : 'No Status';
         ?>
-                <div class="my-case-item">
+                <div class="case-item my-case-item">
                     <h3><?php echo esc_html($my_case->post_title); ?></h3>
                     <h3><strong><?php echo esc_html__('Description:', 'direktt-service-status'); ?> </strong><?php echo esc_html(wp_trim_words($my_case->post_content, 10, '...') ?: '/'); ?></h3>
                     <h3><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($my_case_status); ?></h3>
@@ -2181,26 +2181,26 @@ function direktt_add_service_case_shortcode() {
 									echo '</tr>';
 								}
 								echo '</table>';
-                    }
-                    ?>
-                </div>
-            <?php
-            }
-        } else {
-            ?>
-            <h3><?php echo esc_html__('You have no open cases.', 'direktt-service-status'); ?></h3>
-        <?php
-        }
-        if ($eligible) {
-        ?>
-            <button id="go-back"><?php echo esc_html__('Go back', 'direktt-service-status'); ?></button>
-        <?php
-        }
-        ?>
-    </div>
+							}
+							?>
+						</div>
+					<?php
+					}
+				} else {
+					?>
+					<h3><?php echo esc_html__('You have no open cases.', 'direktt-service-status'); ?></h3>
+				<?php
+				}
+				if ($eligible) {
+				?>
+					<button id="go-back"><?php echo esc_html__('Go back', 'direktt-service-status'); ?></button>
+				<?php
+				}
+				?>
+			</div>
 <?php
-	echo '</div>';
-	echo '</div>';
+			echo '</div>';
+		echo '</div>';
 	echo '</div>';
     return ob_get_clean();
 }
