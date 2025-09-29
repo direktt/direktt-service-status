@@ -2209,3 +2209,21 @@ function direktt_add_service_case_shortcode() {
 	echo '</div>';
     return ob_get_clean();
 }
+
+add_action( 'parent_file', 'direktt_service_status_highlight_submenu' );
+
+function direktt_service_status_highlight_submenu( $parent_file ) {
+	global $submenu_file, $current_screen, $pagenow;
+
+	if ( $pagenow === 'post.php' || $pagenow === 'post-new.php' ) {
+		if ( $current_screen->post_type === 'direktt_service_case' ) {
+			$submenu_file  = 'edit.php?post_type=direktt_service_case';
+			$parent_file = 'direktt-dashboard';
+		}
+	} else if ( $pagenow === 'term.php' && $current_screen->taxonomy === 'case_status' ) {
+        $submenu_file  = 'edit-tags.php?taxonomy=case_status';
+        $parent_file = 'direktt-dashboard';
+    }
+
+	return $parent_file;
+}
