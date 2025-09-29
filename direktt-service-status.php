@@ -191,7 +191,7 @@ function dss_direktt_service_status_change_log_meta_box_callback($post)
 				$user_id = $entry['user_id'];
 				$direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
 				if ($direktt_user) {
-					$user_name = $direktt_user['direktt_display_name'] . " <br/><i>($user_id)</i>";
+					$user_name = "<strong>" . $direktt_user['direktt_display_name'] . "</strong> <br/><i>($user_id)</i>";
 				} else {
 					$user_info = get_userdata($user_id);
 					$user_name = $user_info ? $user_info->user_login : 'Unknown User';
@@ -1008,7 +1008,8 @@ function render_service_status_profile_tool()
 									} else if (entry.type === 'created') {
 										logEntry += '<tr>';
 											logEntry += '<td>';
-												logEntry += entry.user_name;
+												logEntry += '<strong>' + entry.user_name + '</strong>';
+												logEntry += '</br><i>(' + entry.user_id + ')<i>';
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1080,7 +1081,8 @@ function render_service_status_profile_tool()
 										var newTerm = entry.new_term ? entry.new_term : 'None';
 										logEntry += '<tr>';
 											logEntry += '<td>';
-												logEntry += entry.user_name;
+												logEntry += '<strong>' + entry.user_name + '</strong>';
+												logEntry += '</br><i>(' + entry.user_id + ')<i>';
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1095,7 +1097,8 @@ function render_service_status_profile_tool()
 									} else if (entry.type === 'created') {
 										logEntry += '<tr>';
 											logEntry += '<td>';
-												logEntry += entry.user_name;
+												logEntry += '<strong>' + entry.user_name + '</strong>';
+												logEntry += '</br><i>(' + entry.user_id + ')<i>';
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1140,11 +1143,11 @@ function render_service_status_profile_tool()
         <div class="direktt-service-status-wrapper">
             <h2><?php echo esc_html__('Service Status Management', 'direktt-service-status'); ?></h2>
             <div class="direktt-service-status-add-new">
-                <button id="add_new_case"><?php echo esc_html__('Add New Service Case', 'direktt-service-status'); ?></button>
+                <button id="add_new_case" class="button-large button-primary"><?php echo esc_html__('Add New Service Case', 'direktt-service-status'); ?></button>
             </div>
             <div class="direktt-service-status-search">
                 <input type="text" name="search_query" id="search_query" placeholder="<?php echo esc_attr__('Service Cases Number', 'direktt-service-status'); ?>" />
-                <button id="search_cases"><?php echo esc_html__('Search', 'direktt-service-status'); ?></button>
+                <button id="search_cases" class="burron-primary button-invert"><?php echo esc_html__('Search', 'direktt-service-status'); ?></button>
             </div>
             <div class="direktt-service-status-cases-list">
                 <?php
@@ -1184,7 +1187,7 @@ function render_service_status_profile_tool()
 										$user_id = $entry['user_id'];
 										$direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
 										if ($direktt_user) {
-											$user_name = $direktt_user['direktt_display_name'] . " <br/><i>($user_id)</i>";
+											$user_name = "<strong>" . $direktt_user['direktt_display_name'] . " <br/><i>($user_id)</i>";
 										} else {
 											$user_info = get_userdata($user_id);
 											$user_name = $user_info ? $user_info->user_login : 'Unknown User';
@@ -1224,7 +1227,7 @@ function render_service_status_profile_tool()
 								echo '</table>';
 							}
 							?>
-							<button class="edit_case button-primary" data-case-id="<?php echo esc_attr($case_id); ?>"><?php echo esc_html__('Edit Case', 'direktt-service-status'); ?></button>		
+							<button class="edit_case" data-case-id="<?php echo esc_attr($case_id); ?>"><?php echo esc_html__('Edit Case', 'direktt-service-status'); ?></button>		
                         </div>
                     <?php
                     }
@@ -1261,7 +1264,7 @@ function render_service_status_profile_tool()
                         </select>
                     </div>
                     <div class="form-buttons">
-                        <button id="save-case-form" class="button button-primary"><?php echo esc_html__('Save Service Case', 'direktt-service-status'); ?></button>
+                        <button id="save-case-form" class="button button-primary button-large"><?php echo esc_html__('Save Service Case', 'direktt-service-status'); ?></button>
                         <button id="cancel-case-form" class="button-invert button-dark-gray"><?php echo esc_html__('Cancel', 'direktt-service-status'); ?></button>
                     </div>
 					<h3>Activity log</h3>
@@ -1345,12 +1348,13 @@ function handle_direktt_search_service_cases()
         $user_id = $entry['user_id'];
         $direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
         if ($direktt_user) {
-            $user_name = $direktt_user['direktt_display_name'] . "<br/><i>($user_id)</i>";
+            $user_name = $direktt_user['direktt_display_name'];
         } else {
             $user_info = get_userdata($user_id);
             $user_name = $user_info ? $user_info->user_login : 'Unknown User';
         }
         $entry['user_name'] = $user_name;
+        $entry['user_id'] = $user_id;
         if ($entry['type'] !== 'created') {
             $old_term = get_term($entry['old_term'], 'case_status');
             $new_term = get_term($entry['new_term'], 'case_status');
@@ -1408,12 +1412,13 @@ function handle_direktt_search_service_cases_id()
         $user_id = $entry['user_id'];
         $direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
         if ( $direktt_user ) {
-            $user_name = $direktt_user['direktt_display_name'] . "<br/><i>($user_id)</i>";
+            $user_name = $direktt_user['direktt_display_name'];
         } else {
             $user_info = get_userdata($user_id);
-            $user_name = $user_info ? $user_info->user_login : 'Unknown User <br/><i>(Unknown Id)</i>';
+            $user_name = $user_info ? $user_info->user_login : 'Unknown User';
         }
         $entry['user_name'] = $user_name;
+        $entry['user_id'] = $user_id;
         if ($entry['type'] !== 'created') {
             $old_term = get_term($entry['old_term'], 'case_status');
             $new_term = get_term($entry['new_term'], 'case_status');
@@ -1769,7 +1774,7 @@ function direktt_add_service_case_shortcode() {
 											logEntry += '<tr>';
 												logEntry += '<td>';
 													logEntry += entry.user_name;
-													logEntry += '</br><i>(' . entry.id . ')<i>';
+													logEntry += '</br><i>(' . entry.user_id . ')<i>';
 												logEntry += '</td>';
 												logEntry += '<td>';
 													logEntry += entry.date;
@@ -1785,7 +1790,7 @@ function direktt_add_service_case_shortcode() {
 											logEntry += '<tr>';
 												logEntry += '<td>';
 													logEntry += entry.user_name;
-													logEntry += '</br><i>(' . entry.id . ')<i>';
+													logEntry += '</br><i>(' . entry.user_id . ')<i>';
 												logEntry += '</td>';
 												logEntry += '<td>';
 													logEntry += entry.date;
@@ -1859,8 +1864,8 @@ function direktt_add_service_case_shortcode() {
 										var newTerm = entry.new_term ? entry.new_term : 'None';
 										logEntry += '<tr>';
 											logEntry += '<td>';
-												logEntry += entry.user_name;
-												logEntry += '</br><i>(' . entry.id . ')<i>';
+												logEntry += '<strong>' + entry.user_name + '</strong>';
+												logEntry += '</br><i>(' + entry.user_id + ')<i>';
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1875,8 +1880,8 @@ function direktt_add_service_case_shortcode() {
 									} else if (entry.type === 'created') {
 										logEntry += '<tr>';
 											logEntry += '<td>';
-												logEntry += entry.user_name;
-												logEntry += '</br><i>(' . entry.id . ')<i>';
+												logEntry += '<strong>' + entry.user_name + '</strong>';
+												logEntry += '</br><i>(' . entry.user_id . ')<i>';
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1930,7 +1935,7 @@ function direktt_add_service_case_shortcode() {
             <div class="direktt-service-status-wrapper">
                 <h2><?php echo esc_html__('Service Status Management', 'direktt-service-status'); ?></h2>
                 <div class="direktt-service-status-add-new">
-                    <button id="add_new_case"><?php echo esc_html__('Add New Service Case', 'direktt-service-status'); ?></button>
+                    <button id="add_new_case" class="button-large button-primary"><?php echo esc_html__('Add New Service Case', 'direktt-service-status'); ?></button>
                 </div>
                 <div class="direktt-service-status-case-my-cases">
                     <button id="my_cases"><?php echo esc_html__('My Cases', 'direktt-service-status'); ?></button>
@@ -1981,7 +1986,7 @@ function direktt_add_service_case_shortcode() {
 									$user_id = $entry['user_id'];
 									$direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
 									if ($direktt_user) {
-										$user_name = $direktt_user['direktt_display_name'] . " <br/><i>($user_id)</i>";
+										$user_name = "<strong>" . $direktt_user['direktt_display_name'] . "</strong> <br/><i>($user_id)</i>";
 									} else {
 										$user_info = get_userdata($user_id);
 										$user_name = $user_info ? $user_info->user_login : 'Unknown User <br/><i>(Unknown Id)</i>';
@@ -2150,7 +2155,7 @@ function direktt_add_service_case_shortcode() {
 								$user_id = $entry['user_id'];
 								$direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
 								if ($direktt_user) {
-									$user_name = $direktt_user['direktt_display_name'] . " <br/><i>($user_id)</i>";
+									$user_name ="<strong>" . $direktt_user['direktt_display_name'] . " </strong><br/><i>($user_id)</i>";
 								} else {
 									$user_info = get_userdata($user_id);
 									$user_name = $user_info ? $user_info->user_login : 'Unknown User <br/><i>(Unknown Id)</i>';
