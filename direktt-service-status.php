@@ -994,6 +994,8 @@ function render_service_status_profile_tool()
 										logEntry += '<tr>';
 											logEntry += '<td>';
 												logEntry += entry.user_name;
+												logEntry += entry.id;
+												logEntry += entry.user_id;
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1081,6 +1083,8 @@ function render_service_status_profile_tool()
 										logEntry += '<tr>';
 											logEntry += '<td>';
 												logEntry += entry.user_name;
+												logEntry += entry.id;
+												logEntry += entry.user_id;
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1461,6 +1465,7 @@ function direktt_add_service_case_shortcode() {
 	echo '<div id="direktt-profile-wrapper">';
 	echo '<div id="direktt-profile">';
 	echo '<div id="direktt-profile-data" class="direktt-profile-data-service-status-tool direktt-service">';
+	echo '<h2>Service Status Management</h2>';
     if ( $eligible ) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['direktt_service_status_nonce']) && wp_verify_nonce($_POST['direktt_service_status_nonce'], 'direktt_service_status_action')) {
             if (isset($_POST['add_service_case']) && intval($_POST['add_service_case']) === 1) {
@@ -1768,6 +1773,8 @@ function direktt_add_service_case_shortcode() {
 											logEntry += '<tr>';
 												logEntry += '<td>';
 													logEntry += entry.user_name;
+													logEntry += entry.id;
+													logEntry += entry.user_id;
 												logEntry += '</td>';
 												logEntry += '<td>';
 													logEntry += entry.date;
@@ -1857,6 +1864,8 @@ function direktt_add_service_case_shortcode() {
 										logEntry += '<tr>';
 											logEntry += '<td>';
 												logEntry += entry.user_name;
+												logEntry += '</br><i>' . entry.id . '<i>';
+												logEntry += entry.user_id;
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1979,7 +1988,7 @@ function direktt_add_service_case_shortcode() {
 										$user_name = $direktt_user['direktt_display_name'] . " <br><i>($user_id)</i>";
 									} else {
 										$user_info = get_userdata($user_id);
-										$user_name = $user_info ? $user_info->user_login : 'Unknown User';
+										$user_name = $user_info ? $user_info->user_login : 'Unknown User <br><i>Unknown Id</i>';
 									}
 									if ($entry['type'] === 'changed') {
 										$old_term = $entry['old_term'] ? get_term($entry['old_term'])->name : 'None';
@@ -2119,13 +2128,13 @@ function direktt_add_service_case_shortcode() {
         ?>
                 <div class="case-item my-case-item">
                     <h3><?php echo esc_html($my_case->post_title); ?></h3>
-                    <h3><strong><?php echo esc_html__('Description:', 'direktt-service-status'); ?> </strong><?php echo esc_html(wp_trim_words($my_case->post_content, 10, '...') ?: '/'); ?></h3>
-                    <h3><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($my_case_status); ?></h3>
+                    <div class="direktt-service-status-description"><strong><?php echo esc_html__('Description:', 'direktt-service-status'); ?> </strong><?php echo esc_html(wp_trim_words($my_case->post_content, 10, '...') ?: '/'); ?></div>
+                    <div class="direktt-service-status-status"><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($my_case_status); ?></div>
                     <?php
                     $log = get_post_meta($my_case_id, 'direktt_service_status_change_log', true) ?: [];
 					$log = array_reverse( $log );
                     if (! empty($log) && is_array($log)) {
-							echo '<table class="direktt-service-status-log">';
+							echo '<table class="direktt-service-status-log">'; 
 								echo '<thead>';
 									echo '<tr>';
 										echo '<th>';
@@ -2148,7 +2157,7 @@ function direktt_add_service_case_shortcode() {
 									$user_name = $direktt_user['direktt_display_name'] . " <br><i>($user_id)</i>";
 								} else {
 									$user_info = get_userdata($user_id);
-									$user_name = $user_info ? $user_info->user_login : 'Unknown User';
+									$user_name = $user_info ? $user_info->user_login : 'Unknown User <br/><i>Unknown Id</i>';
 								}
 								if ($entry['type'] === 'changed') {
 									$old_term = $entry['old_term'] ? get_term($entry['old_term'])->name : 'None';
