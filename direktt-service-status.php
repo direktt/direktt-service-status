@@ -191,7 +191,7 @@ function dss_direktt_service_status_change_log_meta_box_callback($post)
 				$user_id = $entry['user_id'];
 				$direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
 				if ($direktt_user) {
-					$user_name = $direktt_user['direktt_display_name'] . " <br><i>($user_id)</i>";
+					$user_name = $direktt_user['direktt_display_name'] . " <br/><i>($user_id)</i>";
 				} else {
 					$user_info = get_userdata($user_id);
 					$user_name = $user_info ? $user_info->user_login : 'Unknown User';
@@ -994,8 +994,6 @@ function render_service_status_profile_tool()
 										logEntry += '<tr>';
 											logEntry += '<td>';
 												logEntry += entry.user_name;
-												logEntry += entry.id;
-												logEntry += entry.user_id;
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1083,8 +1081,6 @@ function render_service_status_profile_tool()
 										logEntry += '<tr>';
 											logEntry += '<td>';
 												logEntry += entry.user_name;
-												logEntry += entry.id;
-												logEntry += entry.user_id;
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1411,11 +1407,11 @@ function handle_direktt_search_service_cases_id()
     foreach ($log as $entry) {
         $user_id = $entry['user_id'];
         $direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
-        if ($direktt_user) {
+        if ( $direktt_user ) {
             $user_name = $direktt_user['direktt_display_name'] . "<br/><i>($user_id)</i>";
         } else {
             $user_info = get_userdata($user_id);
-            $user_name = $user_info ? $user_info->user_login : 'Unknown User';
+            $user_name = $user_info ? $user_info->user_login : 'Unknown User <br/><i>(Unknown Id)</i>';
         }
         $entry['user_name'] = $user_name;
         if ($entry['type'] !== 'created') {
@@ -1773,8 +1769,7 @@ function direktt_add_service_case_shortcode() {
 											logEntry += '<tr>';
 												logEntry += '<td>';
 													logEntry += entry.user_name;
-													logEntry += entry.id;
-													logEntry += entry.user_id;
+													logEntry += '</br><i>(' . entry.id . ')<i>';
 												logEntry += '</td>';
 												logEntry += '<td>';
 													logEntry += entry.date;
@@ -1790,6 +1785,7 @@ function direktt_add_service_case_shortcode() {
 											logEntry += '<tr>';
 												logEntry += '<td>';
 													logEntry += entry.user_name;
+													logEntry += '</br><i>(' . entry.id . ')<i>';
 												logEntry += '</td>';
 												logEntry += '<td>';
 													logEntry += entry.date;
@@ -1864,8 +1860,7 @@ function direktt_add_service_case_shortcode() {
 										logEntry += '<tr>';
 											logEntry += '<td>';
 												logEntry += entry.user_name;
-												logEntry += '</br><i>' . entry.id . '<i>';
-												logEntry += entry.user_id;
+												logEntry += '</br><i>(' . entry.id . ')<i>';
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1881,6 +1876,7 @@ function direktt_add_service_case_shortcode() {
 										logEntry += '<tr>';
 											logEntry += '<td>';
 												logEntry += entry.user_name;
+												logEntry += '</br><i>(' . entry.id . ')<i>';
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1985,10 +1981,10 @@ function direktt_add_service_case_shortcode() {
 									$user_id = $entry['user_id'];
 									$direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
 									if ($direktt_user) {
-										$user_name = $direktt_user['direktt_display_name'] . " <br><i>($user_id)</i>";
+										$user_name = $direktt_user['direktt_display_name'] . " <br/><i>($user_id)</i>";
 									} else {
 										$user_info = get_userdata($user_id);
-										$user_name = $user_info ? $user_info->user_login : 'Unknown User <br><i>Unknown Id</i>';
+										$user_name = $user_info ? $user_info->user_login : 'Unknown User <br/><i>(Unknown Id)</i>';
 									}
 									if ($entry['type'] === 'changed') {
 										$old_term = $entry['old_term'] ? get_term($entry['old_term'])->name : 'None';
@@ -2154,10 +2150,10 @@ function direktt_add_service_case_shortcode() {
 								$user_id = $entry['user_id'];
 								$direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
 								if ($direktt_user) {
-									$user_name = $direktt_user['direktt_display_name'] . " <br><i>($user_id)</i>";
+									$user_name = $direktt_user['direktt_display_name'] . " <br/><i>($user_id)</i>";
 								} else {
 									$user_info = get_userdata($user_id);
-									$user_name = $user_info ? $user_info->user_login : 'Unknown User <br/><i>Unknown Id</i>';
+									$user_name = $user_info ? $user_info->user_login : 'Unknown User <br/><i>(Unknown Id)</i>';
 								}
 								if ($entry['type'] === 'changed') {
 									$old_term = $entry['old_term'] ? get_term($entry['old_term'])->name : 'None';
