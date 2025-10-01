@@ -2121,22 +2121,22 @@ function direktt_add_service_case_shortcode() {
     }
     ?>
         <?php
-        if (! empty($my_case_list)) { ?>
-		<div class="direktt-service-status-cases-list my-cases" style="<?php echo $eligible ? esc_attr('display: none;') : ''; ?>">
-		<?php
-            foreach ($my_case_list as $my_case_id) {
-                $my_case = get_post($my_case_id);
-                $my_case_status_terms = get_the_terms($my_case_id, 'case_status');
-                $my_case_status = ($my_case_status_terms && ! is_wp_error($my_case_status_terms)) ? $my_case_status_terms[0]->name : 'No Status';
-        ?>
-                <div class="case-item my-case-item">
-                    <h3><?php echo esc_html($my_case->post_title); ?></h3>
-                    <div class="direktt-service-status-description"><strong><?php echo esc_html__('Description:', 'direktt-service-status'); ?> </strong><?php echo esc_html(wp_trim_words($my_case->post_content, 10, '...') ?: '/'); ?></div>
-                    <div class="direktt-service-status-status"><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($my_case_status); ?></div>
-                    <?php
-                    $log = get_post_meta($my_case_id, 'direktt_service_status_change_log', true) ?: [];
+        if (! empty( $my_case_list )) { ?>
+			<div class="direktt-service-status-cases-list my-cases" style="<?php echo $eligible ? esc_attr('display: none;') : ''; ?>">
+			<?php
+			foreach ( $my_case_list as $my_case_id ) {
+				$my_case = get_post($my_case_id);
+				$my_case_status_terms = get_the_terms($my_case_id, 'case_status');
+				$my_case_status = ($my_case_status_terms && ! is_wp_error($my_case_status_terms)) ? $my_case_status_terms[0]->name : 'No Status';
+		?>
+				<div class="case-item my-case-item">
+					<h3><?php echo esc_html($my_case->post_title); ?></h3>
+					<div class="direktt-service-status-description"><strong><?php echo esc_html__('Description:', 'direktt-service-status'); ?> </strong><?php echo esc_html(wp_trim_words($my_case->post_content, 10, '...') ?: '/'); ?></div>
+					<div class="direktt-service-status-status"><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($my_case_status); ?></div>
+					<?php
+					$log = get_post_meta($my_case_id, 'direktt_service_status_change_log', true) ?: [];
 					// $log = array_reverse( $log );
-                    if (! empty($log) && is_array($log)) {
+					if (! empty($log) && is_array($log)) {
 							echo '<table class="direktt-service-status-log">'; 
 								echo '<thead>';
 									echo '<tr>';
@@ -2154,7 +2154,7 @@ function direktt_add_service_case_shortcode() {
 										echo '</th>';
 									echo '</tr>';
 								echo '</thead>';
-                                $entry = $log[count($log) - 1];
+								$entry = $log[count($log) - 1];
 								$user_id = $entry['user_id'];
 								$direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
 								if ($direktt_user) {
@@ -2198,22 +2198,17 @@ function direktt_add_service_case_shortcode() {
 							?>
 						</div>
 					<?php
-					} ?> 
-				</div>
+					} 
+				echo '</div>';
+			} else { ?>
+				<h3 class="notice notice-warning"><?php echo esc_html__('You have no open cases.', 'direktt-service-status'); ?></h3>
 				<?php
-				} else {
-					?>
-					<h3 class="notice notice-warning"><?php echo esc_html__('You have no open cases.', 'direktt-service-status'); ?></h3>
-				<?php
-				}
-				if ($eligible) {
-				?>
-					<button id="go-back"><?php echo esc_html__('Go back', 'direktt-service-status'); ?></button>
-				<?php
-				}
-				?>
-			
-<?php
+			}
+			if ($eligible) {
+			?>
+				<button id="go-back"><?php echo esc_html__('Go back', 'direktt-service-status'); ?></button>
+			<?php
+			}
 			echo '</div>';
 		echo '</div>';
 	echo '</div>';
