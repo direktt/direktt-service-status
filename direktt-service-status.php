@@ -204,7 +204,7 @@ function dss_direktt_service_status_change_log_meta_box_callback($post)
 							echo wp_kses_post( "<strong>" . $user_name . "</strong> <br/><i>" . $user_id . "</i>" );
 						echo '</td>';
 						echo '<td>';
-							echo esc_html( ( ( $entry['date'] ) ) . ' ago' );
+							echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
 						echo '</td>';
 						echo '<td>';
 							echo esc_html( $old_term );
@@ -219,7 +219,7 @@ function dss_direktt_service_status_change_log_meta_box_callback($post)
 							echo wp_kses_post( "<strong>" . $user_name . "</strong> <br/><i>" . $user_id . "</i>" );
 						echo '</td>';
 						echo '<td>';
-							echo esc_html( ( ( $entry['date'] ) ) . ' ago' );
+							echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
 						echo '</td>';
 						echo '<td colspan="2">';
 							echo esc_html__('Case created', 'direktt-service-status');
@@ -2134,7 +2134,7 @@ function direktt_add_service_case_shortcode() {
                     <div class="direktt-service-status-status"><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($my_case_status); ?></div>
                     <?php
                     $log = get_post_meta($my_case_id, 'direktt_service_status_change_log', true) ?: [];
-					$log = array_reverse( $log );
+					// $log = array_reverse( $log );
                     if (! empty($log) && is_array($log)) {
 							echo '<table class="direktt-service-status-log">'; 
 								echo '<thead>';
