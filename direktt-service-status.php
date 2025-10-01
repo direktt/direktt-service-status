@@ -2067,7 +2067,7 @@ function direktt_add_service_case_shortcode() {
                         </div>
                         <div class="form-log-list"></div>
                         <div class="form-buttons">
-                            <button id="save-case-form" class="button"><?php echo esc_html__('Save Service Case', 'direktt-service-status'); ?></button>
+                            <button id="save-case-form" class="button button-large"><?php echo esc_html__('Save Service Case', 'direktt-service-status'); ?></button>
                             <button id="cancel-case-form" class="button button-invert"><?php echo esc_html__('Cancel', 'direktt-service-status'); ?></button>
                         </div>
                         <input type="hidden" id="case-form-id" value="" />
@@ -2120,9 +2120,10 @@ function direktt_add_service_case_shortcode() {
         }
     }
     ?>
-    <div class="direktt-service-status-cases-list my-cases" style="<?php echo $eligible ? esc_attr('display: none;') : ''; ?>">
         <?php
-        if (! empty($my_case_list)) {
+        if (! empty($my_case_list)) { ?>
+		<div class="direktt-service-status-cases-list my-cases" style="<?php echo $eligible ? esc_attr('display: none;') : ''; ?>">
+		<?php
             foreach ($my_case_list as $my_case_id) {
                 $my_case = get_post($my_case_id);
                 $my_case_status_terms = get_the_terms($my_case_id, 'case_status');
@@ -2197,10 +2198,12 @@ function direktt_add_service_case_shortcode() {
 							?>
 						</div>
 					<?php
-					}
+					} ?> 
+				</div>
+				<?php
 				} else {
 					?>
-					<h3><?php echo esc_html__('You have no open cases.', 'direktt-service-status'); ?></h3>
+					<h3 class="notice notice-warning"><?php echo esc_html__('You have no open cases.', 'direktt-service-status'); ?></h3>
 				<?php
 				}
 				if ($eligible) {
@@ -2209,7 +2212,7 @@ function direktt_add_service_case_shortcode() {
 				<?php
 				}
 				?>
-			</div>
+			
 <?php
 			echo '</div>';
 		echo '</div>';
