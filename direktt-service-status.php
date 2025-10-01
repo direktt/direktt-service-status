@@ -1959,7 +1959,7 @@ function direktt_add_service_case_shortcode() {
                     ?>
                             <div class="case-item">
                                 <div div class="direktt-service-status-user"><strong><?php echo esc_html__('User:', 'direktt-service-status'); ?> </strong><?php echo esc_html($display_name) . ' (' . esc_html($case_user_id) . ')'; ?></div>
-                                <h3><?php echo esc_html($case->post_title); ?></hs>
+                                <h3><?php echo esc_html($case->post_title); ?></h3>
                                 <div div class="direktt-service-status-description"><strong><?php echo esc_html__('Description:', 'direktt-service-status'); ?> </strong><?php echo esc_html(wp_trim_words($case->post_content, 10, '...') ?: '/'); ?></div>
                                 <div div class="direktt-service-status-status"><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($case_status); ?></div>
                                 <?php
