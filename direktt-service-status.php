@@ -1468,7 +1468,7 @@ function direktt_add_service_case_shortcode() {
 	echo '<div id="direktt-profile-wrapper">';
 	echo '<div id="direktt-profile">';
 	echo '<div id="direktt-profile-data" class="direktt-profile-data-service-status-tool direktt-service">';
-	echo '<h2>Service Status Management</h2>';
+	echo '<h2>' . esc_html__( 'Service Status Management', 'direktt-service-status' ) . '</h2>';
     if ( $eligible ) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['direktt_service_status_nonce']) && wp_verify_nonce($_POST['direktt_service_status_nonce'], 'direktt_service_status_action')) {
             if (isset($_POST['add_service_case']) && intval($_POST['add_service_case']) === 1) {
@@ -1792,7 +1792,7 @@ function direktt_add_service_case_shortcode() {
 											logEntry += '<tr>';
 												logEntry += '<td>';
 													logEntry += '<strong>' + entry.user_name + '</strong>';
-													logEntry += '</br><i>(' . entry.user_id . ')</i>';
+													logEntry += '</br><i>(' + entry.user_id + ')</i>';
 												logEntry += '</td>';
 												logEntry += '<td>';
 													logEntry += entry.date;
@@ -1883,7 +1883,7 @@ function direktt_add_service_case_shortcode() {
 										logEntry += '<tr>';
 											logEntry += '<td>';
 												logEntry += '<strong>' + entry.user_name + '</strong>';
-												logEntry += '</br><i>(' . entry.user_id . ')</i>';
+												logEntry += '</br><i>(' + entry.user_id + ')</i>';
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += entry.date;
@@ -1935,7 +1935,6 @@ function direktt_add_service_case_shortcode() {
         </script>
         <div class="direktt-service-status">
             <div class="direktt-service-status-wrapper">
-                <h2><?php echo esc_html__('Service Status Management', 'direktt-service-status'); ?></h2>
                 <div class="direktt-service-status-add-new">
                     <button id="add_new_case" class="button-large button-primary"><?php echo esc_html__('Add New Service Case', 'direktt-service-status'); ?></button>
                 </div>
@@ -2154,6 +2153,7 @@ function direktt_add_service_case_shortcode() {
 										echo '</th>';
 									echo '</tr>';
 								echo '</thead>';
+                                $entry = $log[count($log) - 1];
 								$user_id = $entry['user_id'];
 								$direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
 								if ($direktt_user) {
