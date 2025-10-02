@@ -16,8 +16,7 @@ if (! defined('ABSPATH')) {
 
 add_action('plugins_loaded', 'direktt_service_status_activation_check', -20);
 
-function direktt_service_status_activation_check()
-{
+function direktt_service_status_activation_check() {
     if (! function_exists('is_plugin_active')) {
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
     }
@@ -27,7 +26,7 @@ function direktt_service_status_activation_check()
     if (! is_plugin_active($required_plugin)) {
         add_action('after_plugin_row_direktt-service-status/direktt-service-status.php', function ($plugin_file, $plugin_data, $status) {
             $colspan = 3;
-?>
+            ?>
             <tr class="plugin-update-tr">
                 <td colspan="<?php echo esc_attr($colspan); ?>" style="box-shadow: none;">
                     <div style="color: #b32d2e; font-weight: bold;">
@@ -35,7 +34,7 @@ function direktt_service_status_activation_check()
                     </div>
                 </td>
             </tr>
-        <?php
+            <?php
         }, 10, 3);
 
         deactivate_plugins(plugin_basename(__FILE__));
@@ -44,8 +43,7 @@ function direktt_service_status_activation_check()
 
 add_action('init', 'direktt_register_service_case_cpt');
 
-function direktt_register_service_case_cpt()
-{
+function direktt_register_service_case_cpt() {
     $labels = array(
         'name'               => esc_html__('Direktt Service Cases', 'direktt-service-status'),
         'singular_name'      => esc_html__('Direktt Service Case', 'direktt-service-status'),
@@ -79,8 +77,7 @@ function direktt_register_service_case_cpt()
 
 add_action('admin_enqueue_scripts', 'direktt_dss_enqueue_admin_assets');
 
-function direktt_dss_enqueue_admin_assets($hook)
-{
+function direktt_dss_enqueue_admin_assets($hook) {
     $screen = get_current_screen();
     if (in_array($hook, ['post.php', 'post-new.php']) && $screen->post_type === 'direktt_service_case') {
         wp_register_style('jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
@@ -93,8 +90,7 @@ function direktt_dss_enqueue_admin_assets($hook)
 
 add_action('wp_enqueue_scripts', 'direktt_dss_enqueue_fe_assets');
 
-function direktt_dss_enqueue_fe_assets($hook)
-{
+function direktt_dss_enqueue_fe_assets($hook) {
     global $enqueue_direktt_case_script;
     if ($enqueue_direktt_case_script) {
         wp_register_style('jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
@@ -105,8 +101,7 @@ function direktt_dss_enqueue_fe_assets($hook)
 
 add_action('edit_form_after_title', 'direktt_dss_add_popup');
 
-function direktt_dss_add_popup($post)
-{
+function direktt_dss_add_popup($post) {
     if ('direktt_service_case' === $post->post_type) {
         ?>
         <div class="dsc-error-popup">
@@ -121,8 +116,7 @@ function direktt_dss_add_popup($post)
 
 add_action('add_meta_boxes', 'direktt_add_dss_meta_boxes');
 
-function direktt_add_dss_meta_boxes()
-{
+function direktt_add_dss_meta_boxes() {
     add_meta_box(
         'dss_direktt_subscription_id',
         esc_html__('Subscription ID', 'direktt-service-status'),
@@ -142,8 +136,7 @@ function direktt_add_dss_meta_boxes()
     );
 }
 
-function dss_direktt_subscription_id_meta_box_callback($post)
-{
+function dss_direktt_subscription_id_meta_box_callback($post) {
     $subscription_id = get_post_meta($post->ID, '_dss_direktt_subscription_id', true);
 
     $all_ids = [];
@@ -163,8 +156,7 @@ function dss_direktt_subscription_id_meta_box_callback($post)
 <?php
 }
 
-function dss_direktt_service_status_change_log_meta_box_callback($post)
-{
+function dss_direktt_service_status_change_log_meta_box_callback($post) {
     $log = get_post_meta($post->ID, 'direktt_service_status_change_log', true) ?: [];
 	$log = array_reverse( $log );
 
@@ -214,6 +206,7 @@ function dss_direktt_service_status_change_log_meta_box_callback($post)
 						echo '</td>';
 					echo '</tr>';
 				} else {
+                    $status = $entry['status'] ? get_term($entry['status'])->name : 'None';
 					echo '<tr>';
 						echo '<td>';
 							echo wp_kses_post( "<strong>" . $user_name . "</strong> <br/><i>" . $user_id . "</i>" );
@@ -221,9 +214,12 @@ function dss_direktt_service_status_change_log_meta_box_callback($post)
 						echo '<td>';
 							echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
 						echo '</td>';
-						echo '<td colspan="2">';
-							echo esc_html__('Case created', 'direktt-service-status');
-						echo '</td>';
+						echo '<td>';
+                            echo esc_html( '/' );
+                        echo '</td>';
+                        echo '<td>';
+                            echo esc_html( $status );
+                        echo '</td>';
 					echo '</tr>';
 				}
 			}
@@ -236,8 +232,7 @@ function dss_direktt_service_status_change_log_meta_box_callback($post)
 
 add_action('save_post_direktt_service_case', 'direktt_save_service_case_post');
 
-function direktt_save_service_case_post($post_id)
-{
+function direktt_save_service_case_post($post_id) {
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return;
     }
@@ -301,11 +296,16 @@ function direktt_save_service_case_post($post_id)
         }
         $log = get_post_meta($post_id, 'direktt_service_status_change_log', true) ?: [];
         if (empty($log)) {
-            $log[] = array(
-                'type' => 'created',
-                'user_id' => $user_id,
-                'date' => current_time('mysql'),
-            );
+            $case_status_terms = get_the_terms( $post_id, 'case_status' );
+            if ( $case_status_terms ) {
+                $case_status = ( $case_status_terms && ! is_wp_error( $case_status_terms ) ) ? $case_status_terms[0]->term_id : 0;
+                $log[] = array(
+                    'type' => 'created',
+                    'user_id' => $user_id,
+                    'date' => current_time('mysql'),
+                    'status' => $case_status,
+                );
+            }
         }
         update_post_meta($post_id, 'direktt_service_status_change_log', $log);
     }
@@ -322,8 +322,7 @@ function direktt_save_service_case_post($post_id)
 
 add_action('init', 'direktt_register_case_status_taxonomy');
 
-function direktt_register_case_status_taxonomy()
-{
+function direktt_register_case_status_taxonomy() {
     $labels = array(
         'name'              => esc_html__('Service Case Status', 'direktt-service-status'),
         'singular_name'     => esc_html__('Service Case Status', 'direktt-service-status'),
@@ -352,8 +351,7 @@ function direktt_register_case_status_taxonomy()
 
 add_action('direktt_setup_admin_menu', 'direktt_add_case_status_submenu');
 
-function direktt_add_case_status_submenu()
-{
+function direktt_add_case_status_submenu() {
     add_submenu_page(
         'direktt-dashboard',
         __('Service Cases', 'direktt-service-status'),
@@ -377,8 +375,7 @@ function direktt_add_case_status_submenu()
 
 add_action('parent_file', 'highlight_direktt_submenu_service_status');
 
-function highlight_direktt_submenu_service_status($parent_file)
-{
+function highlight_direktt_submenu_service_status($parent_file) {
     global $submenu_file, $current_screen, $pagenow;
 
     if ($pagenow == 'edit-tags.php' && $current_screen->taxonomy == 'case_status') {
@@ -391,8 +388,7 @@ function highlight_direktt_submenu_service_status($parent_file)
 
 add_action('set_object_terms', 'direktt_log_case_status_change', 10, 6);
 
-function direktt_log_case_status_change($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids)
-{
+function direktt_log_case_status_change($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids) {
     if ($taxonomy !== 'case_status') {
         return;
     }
@@ -475,8 +471,7 @@ function direktt_log_case_status_change($object_id, $terms, $tt_ids, $taxonomy, 
 
 add_action('direktt_setup_settings_pages', 'setup_service_status_settings_page');
 
-function setup_service_status_settings_page()
-{
+function setup_service_status_settings_page() {
     Direktt::add_settings_page(
         array(
             "id" => "service-status",
@@ -487,8 +482,7 @@ function setup_service_status_settings_page()
     );
 }
 
-function render_service_status_settings()
-{
+function render_service_status_settings() {
     $success = false;
 
     // Handle form submission
@@ -532,7 +526,7 @@ function render_service_status_settings()
     $all_categories = Direktt_User::get_all_user_categories();
     $all_tags = Direktt_User::get_all_user_tags();
     $status_options = direktt_service_status_get_status_list();
-?>
+    ?>
     <div class="wrap">
         <?php if ($success) : ?>
             <div class="updated notice is-dismissible">
@@ -640,8 +634,7 @@ function render_service_status_settings()
 
 add_action('direktt_setup_profile_tools', 'setup_service_status_profile_tools');
 
-function setup_service_status_profile_tools()
-{
+function setup_service_status_profile_tools() {
     $selected_category = intval(get_option('direktt_service_status_categories', 0));
     $selected_tag = intval(get_option('direktt_service_status_tags', 0));
 
@@ -682,8 +675,7 @@ function setup_service_status_profile_tools()
     );
 }
 
-function render_service_status_profile_tool()
-{
+function render_service_status_profile_tool() {
     $subscription_id = isset($_GET['subscriptionId']) ? sanitize_text_field(wp_unslash($_GET['subscriptionId'])) : false;
     $profile_user = Direktt_User::get_user_by_subscription_id($subscription_id);
     if (! $profile_user) {
@@ -744,6 +736,7 @@ function render_service_status_profile_tool()
                         'type' => 'created',
                         'user_id' => $user_id,
                         'date' => current_time('mysql'),
+                        'status' => $case_status,
                     );
                 }
                 update_post_meta($case_id, 'direktt_service_status_change_log', $log);
@@ -815,7 +808,7 @@ function render_service_status_profile_tool()
         echo '<div class="updated notice is-dismissible"><p>' . esc_html($message) . '</p></div>';
         delete_transient('direktt_service_status_message');
     }
-?>
+    ?>
     <style>
         /* Popup */
         .service-status-popup {
@@ -1006,6 +999,7 @@ function render_service_status_profile_tool()
 											logEntry += '</td>';
 										logEntry += '</tr>';
 									} else if (entry.type === 'created') {
+                                        var status = entry.status ? entry.status : 'None';
 										logEntry += '<tr>';
 											logEntry += '<td>';
 												logEntry += '<strong>' + entry.user_name + '</strong>';
@@ -1014,8 +1008,11 @@ function render_service_status_profile_tool()
 											logEntry += '<td>';
 												logEntry += entry.date;
 											logEntry += '</td>';
-											logEntry += '<td colspan="2">';
-												logEntry += 'Case created';
+											logEntry += '<td>';
+												logEntry += '/';
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += status;
 											logEntry += '</td>';
 										logEntry += '</tr>';
 									}
@@ -1095,6 +1092,7 @@ function render_service_status_profile_tool()
 											logEntry += '</td>';
 										logEntry += '</tr>';
 									} else if (entry.type === 'created') {
+                                        var status = entry.status ? entry.status : 'None';
 										logEntry += '<tr>';
 											logEntry += '<td>';
 												logEntry += '<strong>' + entry.user_name + '</strong>';
@@ -1103,8 +1101,11 @@ function render_service_status_profile_tool()
 											logEntry += '<td>';
 												logEntry += entry.date;
 											logEntry += '</td>';
-											logEntry += '<td colspan="2">';
-												logEntry += 'Case created';
+											logEntry += '<td>';
+												logEntry += '/';
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += status;
 											logEntry += '</td>';
 										logEntry += '</tr>';
 									}
@@ -1163,7 +1164,7 @@ function render_service_status_profile_tool()
                             <div class="direktt-service-status-status"><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($case_status); ?></div>
 							<?php
 							$log = get_post_meta($case_id, 'direktt_service_status_change_log', true) ?: [];
-							$log = array_slice( array_reverse( $log ), 0, 2 );
+							$log = array_slice( array_reverse( $log ), 0, 1 );
 							if (! empty($log) && is_array($log)) {
 								echo '<table class="direktt-service-status-log">';
 								echo '<thead>';
@@ -1210,6 +1211,7 @@ function render_service_status_profile_tool()
 												echo '</td>';
 											echo '</tr>';
 										} else {
+                                            $status = $entry['status'] ? get_term($entry['status'])->name : 'None';
 											echo '<tr>';
 												echo '<td>';
 													echo wp_kses_post( "<strong>" . $user_name . "</strong> <br/><i>" . $user_id . "</i>" );
@@ -1217,9 +1219,12 @@ function render_service_status_profile_tool()
 												echo '<td>';
 													echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
 												echo '</td>';
-												echo '<td colspan="2">';
-													echo esc_html__('Case created', 'direktt-service-status');
-												echo '</td>';
+												echo '<td>';
+                                                    echo esc_html( '/' );
+                                                echo '</td>';
+                                                echo '<td>';
+                                                    echo esc_html( $status );
+                                                echo '</td>';
 											echo '</tr>';
 										}
 									}
@@ -1283,8 +1288,7 @@ function render_service_status_profile_tool()
     <?php
 }
 
-function direktt_service_status_get_status_list()
-{
+function direktt_service_status_get_status_list() {
     $status_terms = get_terms([
         'taxonomy'   => 'case_status',
         'hide_empty' => false,
@@ -1301,8 +1305,7 @@ function direktt_service_status_get_status_list()
 
 add_action('wp_ajax_direktt_search_service_cases', 'handle_direktt_search_service_cases');
 
-function handle_direktt_search_service_cases()
-{
+function handle_direktt_search_service_cases() {
     if (! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'direktt_service_status_action')) {
         wp_send_json_error(esc_html__('Invalid nonce.', 'direktt-service-status'));
         wp_die();
@@ -1343,6 +1346,7 @@ function handle_direktt_search_service_cases()
     $case_status_terms = get_the_terms($case->ID, 'case_status');
     $case_status_id = ($case_status_terms && ! is_wp_error($case_status_terms)) ? $case_status_terms[0]->term_id : 0;
     $log = get_post_meta($case->ID, 'direktt_service_status_change_log', true) ?: [];
+    $log = array_reverse( $log );
     $log_entries = [];
     foreach ( $log as $entry ) {
         $user_id = $entry['user_id'];
@@ -1361,6 +1365,9 @@ function handle_direktt_search_service_cases()
             $new_term = get_term($entry['new_term'], 'case_status');
             $entry['old_term'] = $old_term->name;
             $entry['new_term'] = $new_term->name;
+        } else {
+            $status = get_term($entry['status'], 'case_status');
+            $entry['status'] = $status->name;
         }
         $log_entries[] = $entry;
     }
@@ -1381,8 +1388,7 @@ function handle_direktt_search_service_cases()
 
 add_action('wp_ajax_direktt_search_service_cases_id', 'handle_direktt_search_service_cases_id');
 
-function handle_direktt_search_service_cases_id()
-{
+function handle_direktt_search_service_cases_id() {
     if (! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'direktt_service_status_action')) {
         wp_send_json_error(esc_html__('Invalid nonce.', 'direktt-service-status'));
         wp_die();
@@ -1407,7 +1413,7 @@ function handle_direktt_search_service_cases_id()
     $case_status_terms = get_the_terms($case->ID, 'case_status');
     $case_status_id = ($case_status_terms && ! is_wp_error($case_status_terms)) ? $case_status_terms[0]->term_id : 0;
     $log = get_post_meta($case->ID, 'direktt_service_status_change_log', true) ?: [];
-	// $log = array_reverse( $log );
+	$log = array_reverse( $log );
     $log_entries = [];
     foreach ($log as $entry) {
         $user_id = $entry['user_id'];
@@ -1426,6 +1432,9 @@ function handle_direktt_search_service_cases_id()
             $new_term = get_term($entry['new_term'], 'case_status');
             $entry['old_term'] = $old_term->name;
             $entry['new_term'] = $new_term->name;
+        } else {
+            $status = get_term($entry['status'], 'case_status');
+            $entry['status'] = $status->name;
         }
         $log_entries[] = $entry;
     }
@@ -1518,6 +1527,7 @@ function direktt_add_service_case_shortcode() {
                             'type' => 'created',
                             'user_id' => $subscription_id,
                             'date' => current_time('mysql'),
+                            'status' => $case_status,
                         );
                     }
                     update_post_meta($case_id, 'direktt_service_status_change_log', $log);
@@ -1620,6 +1630,7 @@ function direktt_add_service_case_shortcode() {
                     event.preventDefault();
                     $('.my-cases').show();
                     $('.direktt-service-status').hide();
+                    $('#go-back').show();
                 });
 
                 $('#add_new_case').on('click', function() {
@@ -1789,6 +1800,7 @@ function direktt_add_service_case_shortcode() {
 												logEntry += '</td>';
 											logEntry += '</tr>';
 										} else if (entry.type === 'created') {
+                                            var status = entry.status ? entry.status : 'None';
 											logEntry += '<tr>';
 												logEntry += '<td>';
 													logEntry += '<strong>' + entry.user_name + '</strong>';
@@ -1797,8 +1809,11 @@ function direktt_add_service_case_shortcode() {
 												logEntry += '<td>';
 													logEntry += entry.date;
 												logEntry += '</td>';
-												logEntry += '<td colspan="2">';
-													logEntry += 'Case created';
+												logEntry += '<td>';
+													logEntry += '/';
+												logEntry += '</td>';
+												logEntry += '<td>';
+													logEntry += status;
 												logEntry += '</td>';
 											logEntry += '</tr>';
 										}
@@ -1880,6 +1895,7 @@ function direktt_add_service_case_shortcode() {
 											logEntry += '</td>';
 										logEntry += '</tr>';
 									} else if (entry.type === 'created') {
+                                        var status = entry.status ? entry.status : 'None';
 										logEntry += '<tr>';
 											logEntry += '<td>';
 												logEntry += '<strong>' + entry.user_name + '</strong>';
@@ -1888,8 +1904,11 @@ function direktt_add_service_case_shortcode() {
 											logEntry += '<td>';
 												logEntry += entry.date;
 											logEntry += '</td>';
-											logEntry += '<td colspan="2">';
-												logEntry += 'Case created';
+											logEntry += '<td>';
+												logEntry += '/';
+											logEntry += '</td>';
+											logEntry += '<td>';
+												logEntry += status;
 											logEntry += '</td>';
 										logEntry += '</tr>';
 									}
@@ -1964,7 +1983,7 @@ function direktt_add_service_case_shortcode() {
                                 <div div class="direktt-service-status-status"><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($case_status); ?></div>
                                 <?php
                                 $log = get_post_meta($case_id, 'direktt_service_status_change_log', true) ?: [];
-								$log = array_reverse( $log );
+								// $log = array_reverse( $log );
                                 if (! empty($log) && is_array($log)) {
                                     $entry = $log[count($log) - 1];
 									echo '<table class="direktt-service-status-log">';
@@ -2010,6 +2029,7 @@ function direktt_add_service_case_shortcode() {
 											echo '</td>';
 										echo '</tr>';
 									} else {
+                                        $status = $entry['status'] ? get_term($entry['status'])->name : 'None';
 										echo '<tr>';
 											echo '<td>';
 												echo wp_kses_post( $user_name ) ;
@@ -2017,8 +2037,11 @@ function direktt_add_service_case_shortcode() {
 											echo '<td>';
 												echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
 											echo '</td>';
-											echo '<td colspan="2">';
-												echo esc_html__('Case created', 'direktt-service-status');
+											echo '<td>';
+												echo esc_html( '/' );
+											echo '</td>';
+											echo '<td>';
+												echo esc_html( $status );
 											echo '</td>';
 										echo '</tr>';
 									}
@@ -2087,10 +2110,11 @@ function direktt_add_service_case_shortcode() {
     ?>
         <script>
             jQuery(function($) {
-                $('#go-back').on('click', function() {
+                $('#go-back').off('click').on('click', function(event) {
                     event.preventDefault();
                     $('.my-cases').hide();
                     $('.direktt-service-status').show();
+                    $('#go-back').hide();
                 });
             });
         </script>
@@ -2181,6 +2205,7 @@ function direktt_add_service_case_shortcode() {
 										echo '</td>';
 									echo '</tr>';
 								} else {
+                                    $status = $entry['status'] ? get_term($entry['status'])->name : 'None';
 									echo '<tr>';
 										echo '<td>';
 											echo wp_kses_post( $user_name ) ;
@@ -2188,9 +2213,12 @@ function direktt_add_service_case_shortcode() {
 										echo '<td>';
 											echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
 										echo '</td>';
-										echo '<td colspan="2">';
-											echo esc_html__('Case created', 'direktt-service-status');
+										echo '<td>';
+											echo esc_html( '/' );
 										echo '</td>';
+                                        echo '<td>';
+                                            echo esc_html( $status );
+                                        echo '</td>';
 									echo '</tr>';
 								}
 								echo '</table>';
@@ -2206,7 +2234,7 @@ function direktt_add_service_case_shortcode() {
 			}
 			if ($eligible) {
 			?>
-				<button id="go-back"><?php echo esc_html__('Go back', 'direktt-service-status'); ?></button>
+				<button id="go-back" style="display: none;"><?php echo esc_html__('Go back', 'direktt-service-status'); ?></button>
 			<?php
 			}
 			echo '</div>';
