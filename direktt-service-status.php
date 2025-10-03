@@ -2165,9 +2165,6 @@ function direktt_add_service_case_shortcode() {
 								echo '<thead>';
 									echo '<tr>';
 										echo '<th>';
-											echo esc_html__('User', 'direktt-service-status');
-										echo '</th>';
-										echo '<th>';
 											echo esc_html__('Time', 'direktt-service-status');
 										echo '</th>';
 										echo '<th>';
@@ -2179,21 +2176,10 @@ function direktt_add_service_case_shortcode() {
 									echo '</tr>';
 								echo '</thead>';
 								$entry = $log[count($log) - 1];
-								$user_id = $entry['user_id'];
-								$direktt_user = Direktt_User::get_user_by_subscription_id($user_id);
-								if ($direktt_user) {
-									$user_name ="<strong>" . $direktt_user['direktt_display_name'] . " </strong><br/><i>($user_id)</i>";
-								} else {
-									$user_info = get_userdata($user_id);
-									$user_name = $user_info ? $user_info->user_login : '<strong>Unknown User</strong> <br/><i>(Unknown Id)</i>';
-								}
 								if ($entry['type'] === 'changed') {
 									$old_term = $entry['old_term'] ? get_term($entry['old_term'])->name : 'None';
 									$new_term = $entry['new_term'] ? get_term($entry['new_term'])->name : 'None';
 									echo '<tr>';
-										echo '<td>';
-											echo wp_kses_post($user_name);
-										echo '</td>';
 										echo '<td>';
 											echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
 										echo '</td>';
@@ -2207,9 +2193,6 @@ function direktt_add_service_case_shortcode() {
 								} else {
                                     $status = $entry['status'] ? get_term($entry['status'])->name : 'None';
 									echo '<tr>';
-										echo '<td>';
-											echo wp_kses_post( $user_name ) ;
-										echo '</td>';
 										echo '<td>';
 											echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
 										echo '</td>';
