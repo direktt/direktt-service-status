@@ -2159,7 +2159,7 @@ function direktt_add_service_case_shortcode() {
 					<div class="direktt-service-status-status"><strong><?php echo esc_html__('Status:', 'direktt-service-status'); ?> </strong><?php echo esc_html($my_case_status); ?></div>
 					<?php
 					$log = get_post_meta($my_case_id, 'direktt_service_status_change_log', true) ?: [];
-					// $log = array_reverse( $log );
+					$log = array_reverse( $log );
 					if (! empty($log) && is_array($log)) {
 							echo '<table class="direktt-service-status-log">'; 
 								echo '<thead>';
@@ -2175,37 +2175,38 @@ function direktt_add_service_case_shortcode() {
 										echo '</th>';
 									echo '</tr>';
 								echo '</thead>';
-								$entry = $log[count($log) - 1];
-								if ($entry['type'] === 'changed') {
-									$old_term = $entry['old_term'] ? get_term($entry['old_term'])->name : 'None';
-									$new_term = $entry['new_term'] ? get_term($entry['new_term'])->name : 'None';
-									echo '<tr>';
-										echo '<td>';
-											echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
-										echo '</td>';
-										echo '<td>';
-											echo esc_html( $old_term );
-										echo '</td>';
-										echo '<td>';
-											echo esc_html( $new_term );
-										echo '</td>';
-									echo '</tr>';
-								} else {
-                                    $status = $entry['status'] ? get_term($entry['status'])->name : 'None';
-									echo '<tr>';
-										echo '<td>';
-											echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
-										echo '</td>';
-										echo '<td>';
-											echo esc_html( '/' );
-										echo '</td>';
-                                        echo '<td>';
-                                            echo esc_html( $status );
-                                        echo '</td>';
-									echo '</tr>';
-								}
-								echo '</table>';
-							}
+								foreach( $log as $entry ) {
+                                    if ($entry['type'] === 'changed') {
+                                        $old_term = $entry['old_term'] ? get_term($entry['old_term'])->name : 'None';
+                                        $new_term = $entry['new_term'] ? get_term($entry['new_term'])->name : 'None';
+                                        echo '<tr>';
+                                            echo '<td>';
+                                                echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
+                                            echo '</td>';
+                                            echo '<td>';
+                                                echo esc_html( $old_term );
+                                            echo '</td>';
+                                            echo '<td>';
+                                                echo esc_html( $new_term );
+                                            echo '</td>';
+                                        echo '</tr>';
+                                    } else {
+                                        $status = $entry['status'] ? get_term($entry['status'])->name : 'None';
+                                        echo '<tr>';
+                                            echo '<td>';
+                                                echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
+                                            echo '</td>';
+                                            echo '<td>';
+                                                echo esc_html( '/' );
+                                            echo '</td>';
+                                            echo '<td>';
+                                                echo esc_html( $status );
+                                            echo '</td>';
+                                        echo '</tr>';
+                                    }
+                                }
+                                echo '</table>';
+                            }
 							?>
 						</div>
 					<?php
