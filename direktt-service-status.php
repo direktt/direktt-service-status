@@ -835,52 +835,26 @@ function render_service_status_profile_tool() {
         echo '<div class="' . esc_attr( $class ) . '"><p>' . esc_html( $message ) . '</p></div>';
     }
 	?>
-	<style>
-		/* Popup */
-		.service-status-popup {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: rgba(0, 0, 0, 0.7);
-			display: none;
-			z-index: 9998;
-			margin-block: 0 !important;
-		}
-
-		.service-status-popup .service-status-popup-content {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			background: white;
-			padding: 20px;
-			border-radius: 10px;
-			z-index: 10000;
-			display: flex;
-			flex-direction: column;
-		}
-	</style>
 	<script>
 		jQuery(function($) {
-			$('#add_new_case').on('click', function() {
+			$('#add_new_case').off('click').on('click', function(event) {
 				event.preventDefault();
 				$('.direktt-service-status-wrapper').hide();
 				$('.direktt-service-status-case-form').show();
 				$('.direktt-service-status-case-form h2').text('<?php echo esc_js( 'Add New Service Case', 'direktt-service-status' ); ?>');
 				$('#save-case-form').data('action', 'add');
+                $('.notice').remove();
 			});
 
-			$('#save-case-form').on('click', function() {
+			$('#save-case-form').off('click').on('click', function(event) {
 				event.preventDefault();
 				var action = $(this).data('action');
 				var caseNumber = $('#case-form-number').val().trim();
 				var caseDescription = $('#case-form-description').val().trim();
 				var caseStatus = $('#case-form-status').val();
 				if (caseStatus === '0') {
-					$('#case-form-error').fadeIn();
-					$('#case-form-error-text').text('<?php echo esc_js( 'Please select a valid case status.', 'direktt-service-status' ); ?>');
+                    $('#direktt-service-status-alert').addClass('direktt-popup-on');
+                    $('#direktt-service-status-alert .direktt-popup-text').text('<?php echo esc_js( __( 'Please select a valid case status.', 'direktt-service-status' ) ); ?>');
 					return;
 				}
 
@@ -940,12 +914,12 @@ function render_service_status_profile_tool() {
 				}
 			});
 
-			$('#close-case-form-error').on('click', function() {
+			$('#direktt-service-status-alert .direktt-popup-ok').off('click').on('click', function(event) {
 				event.preventDefault();
-				$('#case-form-error').fadeOut();
+                $('#direktt-service-status-alert').removeClass('direktt-popup-on');
 			});
 
-			$('#cancel-case-form').on('click', function() {
+			$('#cancel-case-form').off('click').on('click', function(event) {
 				event.preventDefault();
 				$('.direktt-service-status-case-form').hide();
 				$('.direktt-service-status-wrapper').show();
@@ -957,14 +931,14 @@ function render_service_status_profile_tool() {
 				$('#case-form-status').val(<?php echo esc_js( $opening_status ); ?>);
 			});
 
-			$('#search_cases').on('click', function(e) {
+			$('#search_cases').off('click').on('click', function(e) {
 				e.preventDefault();
 				var searchQuery = $('input[name="search_query"]').val().trim();
 
 				if (searchQuery === '') {
-					$('#case-form-error').fadeIn();
-					$('#case-form-error-text').text('<?php echo esc_js( 'Please enter a service case number to search.', 'direktt-service-status' ); ?>');
-					return;
+                    $('#direktt-service-status-alert').addClass('direktt-popup-on');
+                    $('#direktt-service-status-alert .direktt-popup-text').text('<?php echo esc_js( __( 'Please enter a service case number to search.', 'direktt-service-status' ) ); ?>');
+                    return;
 				}
 
 				$.ajax({
@@ -1047,19 +1021,20 @@ function render_service_status_profile_tool() {
 							logEntry += '</table>';
 							$('.form-log-list').append(logEntry);
 							$('#save-case-form').data('action', 'edit');
+                            $('.notice').remove();
 						} else {
-							$('#case-form-error').fadeIn();
-							$('#case-form-error-text').text(response.data);
+                            $('#direktt-service-status-alert').addClass('direktt-popup-on');
+                            $('#direktt-service-status-alert .direktt-popup-text').text(response.data);
 						}
 					},
 					error: function() {
-						$('#case-form-error').fadeIn();
-						$('#case-form-error-text').text('<?php echo esc_js( 'Error searching for service cases. Please try again.', 'direktt-service-status' ); ?>');
+                        $('#direktt-service-status-alert').addClass('direktt-popup-on');
+                        $('#direktt-service-status-alert .direktt-popup-text').text('<?php echo esc_js( __( 'Error searching for service cases. Please try again.', 'direktt-service-status' ) ); ?>');
 					}
 				});
 			});
 
-			$('.edit_case').on('click', function() {
+			$('.edit_case').off('click').on('click', function(event) {
 				event.preventDefault();
 				var case_id = $(this).data('case-id');
 				$.ajax({
@@ -1140,14 +1115,15 @@ function render_service_status_profile_tool() {
 							logEntry += '</table>';
 							$('.form-log-list').append(logEntry);
 							$('#save-case-form').data('action', 'edit');
+                            $('.notice').remove();
 						} else {
-							$('#case-form-error').fadeIn();
-							$('#case-form-error-text').text(response.data);
+                            $('#direktt-service-status-alert').addClass('direktt-popup-on');
+                            $('#direktt-service-status-alert .direktt-popup-text').text(response.data);
 						}
 					},
 					error: function() {
-						$('#case-form-error').fadeIn();
-						$('#case-form-error-text').text('<?php echo esc_js( 'Error retrieving service case details. Please try again.', 'direktt-service-status' ); ?>');
+                        $('#direktt-service-status-alert').addClass('direktt-popup-on');
+                        $('#direktt-service-status-alert .direktt-popup-text').text('<?php echo esc_js( __( 'Error retrieving service case details. Please try again.', 'direktt-service-status' ) ); ?>');
 					}
 				});
 			});
@@ -1318,12 +1294,9 @@ function render_service_status_profile_tool() {
 				</form>
 			</div>
 		</div>
-		<div id="case-form-error" class="service-status-popup">
-			<div class="service-status-popup-content">
-				<p id="case-form-error-text"></p>
-				<button id="close-case-form-error"><?php echo esc_html__( 'Close', 'direktt-service-status' ); ?></button>
-			</div>
-		</div>
+		<?php
+        echo Direktt_Public::direktt_render_alert_popup( 'direktt-service-status-alert', '' );
+        ?>
 	</div>
 	<?php
 }
@@ -1643,53 +1616,28 @@ function direktt_add_service_case_shortcode() {
 			$all_ids[] = get_post_meta( $user_id, 'direktt_membership_id', true );
 		}
 		?>
-		<style>
-			/* Popup */
-			.service-status-popup {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: rgba(0, 0, 0, 0.7);
-				display: none;
-				z-index: 9998;
-				margin-block: 0 !important;
-			}
-
-			.service-status-popup .service-status-popup-content {
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				background: white;
-				padding: 20px;
-				border-radius: 10px;
-				z-index: 10000;
-				display: flex;
-				flex-direction: column;
-			}
-		</style>
 		<script>
 			jQuery(function($) {
 				var ids = <?php echo wp_json_encode( array_values( array_map( 'strval', $all_ids ) ) ); ?>;
 
-				$('#my_cases').on('click', function() {
+				$('#my_cases').off('click').on('click', function(event) {
 					event.preventDefault();
 					$('.my-cases').show();
 					$('.direktt-service-status').hide();
 					$('#go-back').show();
+                    $('.notice').remove();
 				});
 
-				$('#add_new_case').on('click', function() {
+				$('#add_new_case').off('click').on('click', function(event) {
 					event.preventDefault();
 					$('.direktt-service-status-wrapper').hide();
 					$('.direktt-service-status-case-form').show();
 					$('.direktt-service-status-case-form h2').text('<?php echo esc_js( 'Add New Service Case', 'direktt-service-status' ); ?>');
 					$('#save-case-form').data('action', 'add');
+                    $('.notice').remove();
 				});
 
-				$('#save-case-form').on('click', function() {
+				$('#save-case-form').off('click').on('click', function(event) {
 					event.preventDefault();
 					var action = $(this).data('action');
 					var caseUserId = $('#case-form-user-id').val();
@@ -1697,13 +1645,13 @@ function direktt_add_service_case_shortcode() {
 					var caseDescription = $('#case-form-description').val().trim();
 					var caseStatus = $('#case-form-status').val();
 					if (caseStatus === '0') {
-						$('#case-form-error').fadeIn();
-						$('#case-form-error-text').text('<?php echo esc_js( 'Please select valid case status.', 'direktt-service-status' ); ?>');
+                        $('#direktt-service-status-alert').addClass('direktt-popup-on');
+                        $('#direktt-service-status-alert .direktt-popup-text').text('<?php echo esc_js( __( 'Please select valid case status.', 'direktt-service-status' ) ); ?>');
 						return;
 					}
 					if (!ids.includes(caseUserId)) {
-						$('#case-form-error').fadeIn();
-						$('#case-form-error-text').text('<?php echo esc_js( 'Please enter valid Subscription/Membership ID.', 'direktt-service-status' ); ?>');
+						$('#direktt-service-status-alert').addClass('direktt-popup-on');
+                        $('#direktt-service-status-alert .direktt-popup-text').text('<?php echo esc_js( 'Please enter valid Subscription/Membership ID.', 'direktt-service-status' ); ?>');
 						return;
 					}
 
@@ -1773,12 +1721,12 @@ function direktt_add_service_case_shortcode() {
 					}
 				});
 
-				$('#close-case-form-error').on('click', function() {
+				$('#direktt-service-status-alert .direktt-popup-ok').off('click').on('click', function(event) {
 					event.preventDefault();
-					$('#case-form-error').fadeOut();
+					$('#direktt-service-status-alert').removeClass('direktt-popup-on');
 				});
 
-				$('#cancel-case-form').on('click', function() {
+				$('#cancel-case-form').off('click').on('click', function(event) {
 					event.preventDefault();
 					$('.direktt-service-status-case-form').hide();
 					$('.direktt-service-status-wrapper').show();
@@ -1792,14 +1740,14 @@ function direktt_add_service_case_shortcode() {
 					$('#case-form-status').val(<?php echo esc_js( $opening_status ); ?>);
 				});
 
-				$('#search_cases').on('click', function(e) {
+				$('#search_cases').off('click').on('click', function(e) {
 					e.preventDefault();
 					var searchQuery = $('input[name="search_query"]').val().trim();
 
 					if (searchQuery === '') {
-						$('#case-form-error').fadeIn();
-						$('#case-form-error-text').text('<?php echo esc_js( 'Please enter a service case number to search.', 'direktt-service-status' ); ?>');
-						return;
+                        $('#direktt-service-status-alert').addClass('direktt-popup-on');
+                        $('#direktt-service-status-alert .direktt-popup-text').text('<?php echo esc_js( __( 'Please enter a service case number to search.', 'direktt-service-status' ) ); ?>');
+                        return;
 					}
 
 					$.ajax({
@@ -1870,19 +1818,20 @@ function direktt_add_service_case_shortcode() {
 								logEntry += '</table>';
 								$('.form-log-list').append(logEntry);
 								$('#save-case-form').data('action', 'edit');
+                                $('.notice').remove();
 							} else {
-								$('#case-form-error').fadeIn();
-								$('#case-form-error-text').text(response.data);
+                                $('#direktt-service-status-alert').addClass('direktt-popup-on');
+                                $('#direktt-service-status-alert .direktt-popup-text').text(response.data);
 							}
 						},
 						error: function() {
-							$('#case-form-error').fadeIn();
-							$('#case-form-error-text').text('<?php echo esc_js( 'Error searching for service cases. Please try again.', 'direktt-service-status' ); ?>');
+                            $('#direktt-service-status-alert').addClass('direktt-popup-on');
+                            $('#direktt-service-status-alert .direktt-popup-text').text('<?php echo esc_js( __( 'Error searching for service cases. Please try again.', 'direktt-service-status' ) ); ?>');
 						}
 					});
 				});
 
-				$('.edit_case').on('click', function() {
+				$('.edit_case').off('click').on('click', function(event) {
 					event.preventDefault();
 					var case_id = $(this).data('case-id');
 					$.ajax({
@@ -1965,14 +1914,15 @@ function direktt_add_service_case_shortcode() {
 							logEntry += '</table>';
 								$('.form-log-list').append(logEntry);
 								$('#save-case-form').data('action', 'edit');
+                                $('.notice').remove();
 							} else {
-								$('#case-form-error').fadeIn();
-								$('#case-form-error-text').text(response.data);
+                                $('#direktt-service-status-alert').addClass('direktt-popup-on');
+                                $('#direktt-service-status-alert .direktt-popup-text').text(response.data);
 							}
 						},
 						error: function() {
-							$('#case-form-error').fadeIn();
-							$('#case-form-error-text').text('<?php echo esc_js( 'Error retrieving service case details. Please try again.', 'direktt-service-status' ); ?>');
+                            $('#direktt-service-status-alert').addClass('direktt-popup-on');
+                            $('#direktt-service-status-alert .direktt-popup-text').text('<?php echo esc_js( __( 'Error retrieving service case details. Please try again.', 'direktt-service-status' ) ); ?>');
 						}
 					});
 				});
@@ -1992,8 +1942,7 @@ function direktt_add_service_case_shortcode() {
 						)
 					)
 				);
-				?>
-								;
+				?>;
 
 				$(document).on('focus', '#search_query', function() {
 					var $el = $(this);
@@ -2178,12 +2127,9 @@ function direktt_add_service_case_shortcode() {
 					</form>
 				</div>
 			</div>
-			<div id="case-form-error" class="service-status-popup">
-				<div class="service-status-popup-content">
-					<p id="case-form-error-text"></p>
-					<button id="close-case-form-error"><?php echo esc_html__( 'Close', 'direktt-service-status' ); ?></button>
-				</div>
-			</div>
+            <?php
+            echo Direktt_Public::direktt_render_alert_popup( 'direktt-service-status-alert', '' );
+            ?>
 		</div>
 		<?php
 	}
