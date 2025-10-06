@@ -750,12 +750,12 @@ function render_service_status_profile_tool() {
 				}
 				update_post_meta( $case_id, 'direktt_service_status_change_log', $log );
 
-				set_transient( 'direktt_service_status_message', 'Service case added successfully.', 30 );
-				wp_redirect( $_SERVER['REQUEST_URI'] );
+                $redirect_url = add_query_arg( 'success_flag', '1', $_SERVER['REQUEST_URI'] );
+                wp_safe_redirect( $redirect_url );
 				exit;
 			} else {
-				set_transient( 'direktt_service_status_message', 'Error adding service case. Please try again.', 30 );
-				wp_redirect( $_SERVER['REQUEST_URI'] );
+                $redirect_url = add_query_arg( 'success_flag', '0', $_SERVER['REQUEST_URI'] );
+				wp_safe_redirect( $redirect_url );
 				exit;
 			}
 		}
@@ -776,12 +776,12 @@ function render_service_status_profile_tool() {
 
 				wp_set_object_terms( $case_id, array( $case_status ), 'case_status', false );
 
-				set_transient( 'direktt_service_status_message', 'Service case updated successfully.', 30 );
-				wp_redirect( $_SERVER['REQUEST_URI'] );
+                $redirect_url = add_query_arg( 'success_flag', '2', $_SERVER['REQUEST_URI'] );
+				wp_safe_redirect( $redirect_url );
 				exit;
 			} else {
-				set_transient( 'direktt_service_status_message', 'Error updating service case. Please try again.', 30 );
-				wp_redirect( $_SERVER['REQUEST_URI'] );
+                $redirect_url = add_query_arg( 'success_flag', '3', $_SERVER['REQUEST_URI'] );
+				wp_safe_redirect( $redirect_url );
 				exit;
 			}
 		}
@@ -817,10 +817,23 @@ function render_service_status_profile_tool() {
 		}
 	}
 
-	if ( $message = get_transient( 'direktt_service_status_message' ) ) {
-		echo '<div class="updated notice is-dismissible"><p>' . esc_html( $message ) . '</p></div>';
-		delete_transient( 'direktt_service_status_message' );
-	}
+    if ( isset( $_GET['success_flag'] ) ) {
+        $success_flag = sanitize_text_field( wp_unslash( $_GET['success_flag'] ) );
+        $class = 'notice';
+        if ( $success_flag === '0' ) {
+            $message = __( 'Error adding service case. Please try again.', 'direktt-service-status' );
+            $class .= ' notice-error';
+        } elseif ( $success_flag === '1' ) {
+            $message = __( 'Service case added successfully.', 'direktt-service-status' );
+        } elseif ( $success_flag === '2' ) {
+            $message = __( 'Service case updated successfully.', 'direktt-service-status' );
+        } else {
+            $message = __( 'Error updating service case. Please try again.', 'direktt-service-status' );
+            $class .= ' notice-error';
+        }
+
+        echo '<div class="' . esc_attr( $class ) . '"><p>' . esc_html( $message ) . '</p></div>';
+    }
 	?>
 	<style>
 		/* Popup */
@@ -1561,12 +1574,12 @@ function direktt_add_service_case_shortcode() {
 					}
 					update_post_meta( $case_id, 'direktt_service_status_change_log', $log );
 
-					set_transient( 'direktt_service_status_message', 'Service case added successfully.', 30 );
-					wp_redirect( $_SERVER['REQUEST_URI'] );
+                    $redirect_url = add_query_arg( 'success_flag', '1', $_SERVER['REQUEST_URI'] );
+					wp_safe_redirect( $redirect_url );
 					exit;
 				} else {
-					set_transient( 'direktt_service_status_message', 'Error adding service case. Please try again.', 30 );
-					wp_redirect( $_SERVER['REQUEST_URI'] );
+                    $redirect_url = add_query_arg( 'success_flag', '0', $_SERVER['REQUEST_URI'] );
+					wp_safe_redirect( $redirect_url );
 					exit;
 				}
 			}
@@ -1587,12 +1600,12 @@ function direktt_add_service_case_shortcode() {
 
 					wp_set_object_terms( $case_id, array( $case_status ), 'case_status', false );
 
-					set_transient( 'direktt_service_status_message', 'Service case updated successfully.', 30 );
-					wp_redirect( $_SERVER['REQUEST_URI'] );
+                    $redirect_url = add_query_arg( 'success_flag', '2', $_SERVER['REQUEST_URI'] );
+					wp_safe_redirect( $redirect_url );
 					exit;
 				} else {
-					set_transient( 'direktt_service_status_message', 'Error updating service case. Please try again.', 30 );
-					wp_redirect( $_SERVER['REQUEST_URI'] );
+                    $redirect_url = add_query_arg( 'success_flag', '3', $_SERVER['REQUEST_URI'] );
+					wp_safe_redirect( $redirect_url );
 					exit;
 				}
 			}
@@ -1972,7 +1985,7 @@ function direktt_add_service_case_shortcode() {
 							'strval',
 							array_map(
 								function ( $case_id ) {
-												return get_the_title( $case_id );
+                                    return get_the_title( $case_id );
 								},
 								$case_list
 							)
@@ -2003,6 +2016,25 @@ function direktt_add_service_case_shortcode() {
 		</script>
 		<div class="direktt-service-status">
 			<div class="direktt-service-status-wrapper">
+                <?php
+                if ( isset( $_GET['success_flag'] ) ) {
+                    $success_flag = sanitize_text_field( wp_unslash( $_GET['success_flag'] ) );
+                    $class = 'notice';
+                    if ( $success_flag === '1' ) {
+                        $message = __( 'Service case added successfully.', 'direktt-service-status' );
+                    } elseif ( $success_flag === '0' ) {
+                        $message = __( 'Error adding service case. Please try again.', 'direktt-service-status' );
+                        $class .= ' notice-error';
+                    } elseif ( $success_flag === '2' ) {
+                        $message = __( 'Service case updated successfully.', 'direktt-service-status' );
+                    } elseif ( $success_flag === '3' ) {
+                        $message = __( 'Error updating service case. Please try again.', 'direktt-service-status' );
+                        $class .= ' notice-error';
+                    }
+
+                    echo '<div class="' . esc_attr( $class ) . '"><p>' . esc_html( $message ) . '</p></div>';
+                }
+                ?>
 				<div class="direktt-service-status-add-new">
 					<button id="add_new_case" class="button-large button-primary"><?php echo esc_html__( 'Add New Service Case', 'direktt-service-status' ); ?></button>
 				</div>
