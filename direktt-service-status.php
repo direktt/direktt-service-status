@@ -21,7 +21,7 @@ function direktt_service_status_activation_check() {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	}
 
-	$required_plugin = 'direktt-plugin/direktt.php';
+	$required_plugin = 'direktt/direktt.php';
 
 	if ( ! is_plugin_active( $required_plugin ) ) {
 		add_action(
