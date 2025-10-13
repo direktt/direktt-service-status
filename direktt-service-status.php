@@ -1262,9 +1262,10 @@ function render_service_status_profile_tool() {
 		</div>
 		<div class="direktt-service-status-case-form" style="display: none;">
 			<div class="direktt-service-status-case-form-wrapper">
+				<h2></h2>
 				<form method="post">
 					<?php wp_nonce_field( 'direktt_service_status_action', 'direktt_service_status_nonce' ); ?>
-					<h2></h2>
+					
 					<div>
 						<label for="case-form-number"><?php echo esc_html__( 'Service Case Number', 'direktt-service-status' ); ?></label>
 						<input type="text" id="case-form-number" placeholder="<?php echo esc_attr__( 'Service Case Number', 'direktt-service-status' ); ?>" />
@@ -2091,10 +2092,11 @@ function direktt_add_service_case_shortcode() {
 				</div>
 			</div>
 			<div class="direktt-service-status-case-form" style="display: none;">
+				<h2></h2>
 				<div class="direktt-service-status-case-form-wrapper">
 					<form method="post">
 						<?php wp_nonce_field( 'direktt_service_status_action', 'direktt_service_status_nonce' ); ?>
-						<h2></h2>
+						
 						<div>
 							<label for="case-form-number"><?php echo esc_html__( 'Service Case Number', 'direktt-service-status' ); ?></label>
 							<input type="text" id="case-form-number" placeholder="<?php echo esc_attr__( 'Service Case Number', 'direktt-service-status' ); ?>" />
