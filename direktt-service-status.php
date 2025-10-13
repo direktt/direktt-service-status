@@ -17,33 +17,44 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action( 'plugins_loaded', 'direktt_service_status_activation_check', -20 );
 
 function direktt_service_status_activation_check() {
+	
 	if ( ! function_exists( 'is_plugin_active' ) ) {
-		require_once ABSPATH . 'wp-admin/includes/plugin.php';
-	}
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
 
-	$required_plugin = 'direktt/direktt.php';
+    $required_plugin = 'direktt/direktt.php';
+    $is_required_active = is_plugin_active($required_plugin)
+        || (is_multisite() && is_plugin_active_for_network($required_plugin));
 
-	if ( ! is_plugin_active( $required_plugin ) ) {
-		add_action(
-			'after_plugin_row_direktt-service-status/direktt-service-status.php',
-			function ( $plugin_file, $plugin_data, $status ) {
-				$colspan = 3;
-				?>
-			<tr class="plugin-update-tr">
-				<td colspan="<?php echo esc_attr( $colspan ); ?>" style="box-shadow: none;">
-					<div style="color: #b32d2e; font-weight: bold;">
-						<?php echo esc_html__( 'Direktt Service Status requires the Direktt WordPress Plugin to be active. Please activate Direktt WordPress Plugin first.', 'direktt-service-status' ); ?>
-					</div>
-				</td>
-			</tr>
-				<?php
-			},
-			10,
-			3
-		);
+    if (! $is_required_active) {
+        // Deactivate this plugin
+        deactivate_plugins(plugin_basename(__FILE__));
 
-		deactivate_plugins( plugin_basename( __FILE__ ) );
-	}
+        // Prevent the “Plugin activated.” notice
+        if (isset($_GET['activate'])) {
+            unset($_GET['activate']);
+        }
+
+        // Show an error notice for this request
+        add_action('admin_notices', function () {
+            echo '<div class="notice notice-error is-dismissible"><p>'
+                . esc_html__('Direktt Service Status activation failed: The Direktt WordPress Plugin must be active first.', 'direktt-service-status')
+                . '</p></div>';
+        });
+
+        // Optionally also show the inline row message in the plugins list
+        add_action(
+            'after_plugin_row_direktt-service-status/direktt-service-status.php',
+            function () {
+                echo '<tr class="plugin-update-tr"><td colspan="3" style="box-shadow:none;">'
+                    . '<div style="color:#b32d2e;font-weight:bold;">'
+                    . esc_html__('Direktt Service Status requires the Direktt WordPress Plugin to be active. Please activate it first.', 'direktt-service-status')
+                    . '</div></td></tr>';
+            },
+            10,
+            0
+        );
+    }
 }
 
 add_action( 'init', 'direktt_register_service_case_cpt' );
