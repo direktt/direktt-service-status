@@ -2275,4 +2275,3 @@ function direktt_service_status_highlight_submenu( $parent_file ) {
 
 	return $parent_file;
 }
-// test
