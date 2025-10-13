@@ -91,9 +91,9 @@ function direktt_register_service_case_cpt() {
 	register_post_type( 'direktt_service_case', $args );
 }
 
-add_action( 'admin_enqueue_scripts', 'direktt_dss_enqueue_admin_assets' );
+add_action( 'admin_enqueue_scripts', 'direktt_service_status_enqueue_admin_assets' );
 
-function direktt_dss_enqueue_admin_assets( $hook ) {
+function direktt_service_status_enqueue_admin_assets( $hook ) {
 	$screen = get_current_screen();
 	if ( in_array( $hook, array( 'post.php', 'post-new.php' ) ) && $screen->post_type === 'direktt_service_case' ) {
 		wp_register_style( 'jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' );
