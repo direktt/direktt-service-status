@@ -1170,12 +1170,10 @@ function render_service_status_profile_tool() {
 	<div class="direktt-service-status">
 		<div class="direktt-service-status-wrapper">
 			<h2><?php echo esc_html__( 'Service Status Management', 'direktt-service-status' ); ?></h2>
-			<div class="direktt-service-status-add-new">
-				<button id="add_new_case" class="button-large button-primary"><?php echo esc_html__( 'Add New Service Case', 'direktt-service-status' ); ?></button>
-			</div>
+			<button id="add_new_case" class="button-large button-primary"><?php echo esc_html__( 'Add New Service Case', 'direktt-service-status' ); ?></button>
 			<div class="direktt-service-status-search">
 				<input type="text" name="search_query" id="search_query" placeholder="<?php echo esc_attr__( 'Service Cases Number', 'direktt-service-status' ); ?>" />
-				<button id="search_cases" class="burron-primary button-invert"><?php echo esc_html__( 'Search', 'direktt-service-status' ); ?></button>
+				<button id="search_cases" class="button-invert"><?php echo esc_html__( 'Search', 'direktt-service-status' ); ?></button>
 			</div>
 			<div class="direktt-service-status-cases-list">
 				<?php
@@ -1996,15 +1994,11 @@ function direktt_add_service_case_shortcode() {
                     echo '<div class="' . esc_attr( $class ) . '"><p>' . esc_html( $message ) . '</p></div>';
                 }
                 ?>
-				<div class="direktt-service-status-add-new">
-					<button id="add_new_case" class="button-large button-primary"><?php echo esc_html__( 'Add New Service Case', 'direktt-service-status' ); ?></button>
-				</div>
-				<div class="direktt-service-status-case-my-cases">
-					<button id="my_cases"><?php echo esc_html__( 'My Cases', 'direktt-service-status' ); ?></button>
-				</div>
+				<button id="add_new_case" class="button-large button-primary"><?php echo esc_html__( 'Add New Service Case', 'direktt-service-status' ); ?></button>
+				<button id="my_cases"><?php echo esc_html__( 'My Cases', 'direktt-service-status' ); ?></button>
 				<div class="direktt-service-status-search">
 					<input type="text" name="search_query" id="search_query" placeholder="<?php echo esc_attr__( 'Service Cases Number', 'direktt-service-status' ); ?>" />
-					<button id="search_cases"><?php echo esc_html__( 'Search', 'direktt-service-status' ); ?></button>
+					<button id="search_cases" class="button-invert"><?php echo esc_html__( 'Search', 'direktt-service-status' ); ?></button>
 				</div>
 				<div class="direktt-service-status-cases-list">
 					<?php
@@ -2019,8 +2013,8 @@ function direktt_add_service_case_shortcode() {
 							$display_name      = $profile_user['direktt_display_name'];
 							?>
 							<div class="case-item">
-								<div div class="direktt-service-status-user"><strong><?php echo esc_html__( 'User:', 'direktt-service-status' ); ?> </strong><?php echo esc_html( $display_name ) . ' (' . esc_html( $case_user_id ) . ')'; ?></div>
 								<h3><?php echo esc_html( $case->post_title ); ?></h3>
+								<div div class="direktt-service-status-user"><strong><?php echo esc_html__( 'User:', 'direktt-service-status' ); ?> </strong><?php echo esc_html( $display_name ) . ' (' . esc_html( $case_user_id ) . ')'; ?></div>
 								<div div class="direktt-service-status-description"><strong><?php echo esc_html__( 'Description:', 'direktt-service-status' ); ?> </strong><?php echo esc_html( wp_trim_words( $case->post_content, 10, '...' ) ?: '/' ); ?></div>
 								<div div class="direktt-service-status-status"><strong><?php echo esc_html__( 'Status:', 'direktt-service-status' ); ?> </strong><?php echo esc_html( $case_status ); ?></div>
 								<?php
@@ -2204,20 +2198,20 @@ function direktt_add_service_case_shortcode() {
 					$log = get_post_meta( $my_case_id, 'direktt_service_status_change_log', true ) ?: array();
 					$log = array_reverse( $log );
 					if ( ! empty( $log ) && is_array( $log ) ) {
-							echo '<table class="direktt-service-status-log">';
-								echo '<thead>';
-									echo '<tr>';
-										echo '<th>';
-											echo esc_html__( 'Time', 'direktt-service-status' );
-										echo '</th>';
-										echo '<th>';
-											echo esc_html__( 'From', 'direktt-service-status' );
-										echo '</th>';
-										echo '<th>';
-											echo esc_html__( 'To', 'direktt-service-status' );
-										echo '</th>';
-									echo '</tr>';
-								echo '</thead>';
+						echo '<table class="direktt-service-status-log">';
+							echo '<thead>';
+								echo '<tr>';
+									echo '<th>';
+										echo esc_html__( 'Time', 'direktt-service-status' );
+									echo '</th>';
+									echo '<th>';
+										echo esc_html__( 'From', 'direktt-service-status' );
+									echo '</th>';
+									echo '<th>';
+										echo esc_html__( 'To', 'direktt-service-status' );
+									echo '</th>';
+								echo '</tr>';
+							echo '</thead>';
 						foreach ( $log as $entry ) {
 							if ( $entry['type'] === 'changed' ) {
 								$old_term = $entry['old_term'] ? get_term( $entry['old_term'] )->name : 'None';
@@ -2248,13 +2242,15 @@ function direktt_add_service_case_shortcode() {
 								echo '</tr>';
 							}
 						}
-								echo '</table>';
+						echo '</table>';
 					}
 					?>
-						</div>
+				</div>
 					<?php
 			}
-				echo '</div>';
+			?>
+			</div>
+			<?php
 		} else {
 			?>
 				<h3 class="notice notice-warning"><?php echo esc_html__( 'You have no open cases.', 'direktt-service-status' ); ?></h3>
