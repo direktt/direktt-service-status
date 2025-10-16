@@ -31,7 +31,7 @@ function direktt_service_status_activation_check() {
         deactivate_plugins(plugin_basename(__FILE__));
 
         // Prevent the “Plugin activated.” notice
-        if (isset($_GET['activate'])) {
+        if (isset($_GET['activate'])) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Justification: not a form processing, just removing a query var.
             unset($_GET['activate']);
         }
 
@@ -96,7 +96,7 @@ add_action( 'admin_enqueue_scripts', 'direktt_service_status_enqueue_admin_asset
 function direktt_service_status_enqueue_admin_assets( $hook ) {
 	$screen = get_current_screen();
 	if ( in_array( $hook, array( 'post.php', 'post-new.php' ) ) && $screen->post_type === 'direktt_service_case' ) {
-		wp_register_style( 'jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' );
+		wp_register_style( 'jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', array(), '1.12.1' );
 		wp_enqueue_style( 'jquery-ui-css' );
 		wp_enqueue_script( 'jquery-ui-autocomplete' );
 		wp_enqueue_script( 'direktt-service-status', plugins_url( 'direktt-service-status.js', __FILE__ ), array( 'jquery' ), filemtime( plugin_dir_path( __FILE__ ) . 'direktt-service-status.js' ), true );
@@ -109,7 +109,7 @@ add_action( 'wp_enqueue_scripts', 'direktt_dss_enqueue_fe_assets' );
 function direktt_dss_enqueue_fe_assets( $hook ) {
 	global $enqueue_direktt_case_script;
 	if ( $enqueue_direktt_case_script ) {
-		wp_register_style( 'jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' );
+		wp_register_style( 'jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', array(), '1.12.1' );
 		wp_enqueue_style( 'jquery-ui-css' );
 		wp_enqueue_script( 'jquery-ui-autocomplete' );
 	}
@@ -169,7 +169,7 @@ function dss_direktt_subscription_id_meta_box_callback( $post ) {
 
 	?>
 	<label for="dss_direktt_subscription_id_input"><?php echo esc_html__( 'Enter the ID:', 'direktt-service-status' ); ?></label>
-	<input type="text" id="dss_direktt_subscription_id_input" name="dss_direktt_subscription_id_input" value="<?php echo esc_attr( $subscription_id ); ?>" placeholder="<?php echo esc_attr__( 'Enter the ID...', 'direktt' ); ?>" />
+	<input type="text" id="dss_direktt_subscription_id_input" name="dss_direktt_subscription_id_input" value="<?php echo esc_attr( $subscription_id ); ?>" placeholder="<?php echo esc_attr__( 'Enter the ID...', 'direktt-service-status' ); ?>" />
 	<input type="hidden" id="dss_all_ids" name="dss_all_ids" value="<?php echo esc_attr( wp_json_encode( array_values( array_map( 'strval', $all_ids ) ) ) ); ?>" />
 	<?php
 }
@@ -277,7 +277,7 @@ function direktt_save_service_case_post( $post_id ) {
 	$subscription_id = get_post_meta( $post_id, '_dss_direktt_subscription_id', true );
 
 	if ( isset( $_POST['dss_direktt_subscription_id_input'] ) ) {
-		$subscription_id = trim( sanitize_text_field( $_POST['dss_direktt_subscription_id_input'] ) );
+		$subscription_id = trim( sanitize_text_field( wp_unslash( $_POST['dss_direktt_subscription_id_input'] ) ) );
 		update_post_meta( $post_id, '_dss_direktt_subscription_id', $subscription_id );
 	}
 
@@ -506,10 +506,10 @@ function render_service_status_settings() {
 	$success = false;
 
 	// Handle form submission
-	if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['direktt_admin_service_status_nonce'] ) && wp_verify_nonce( $_POST['direktt_admin_service_status_nonce'], 'direktt_admin_service_status_save' ) ) {
+	if ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['direktt_admin_service_status_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['direktt_admin_service_status_nonce'] ) ), 'direktt_admin_service_status_save' ) ) {
 		// update options based on form submission
-		update_option( 'direktt_service_status_new_case_template', intval( $_POST['direktt_service_status_new_case_template'] ) );
-		update_option( 'direktt_service_status_case_change_template', intval( $_POST['direktt_service_status_case_change_template'] ) );
+		update_option( 'direktt_service_status_new_case_template', isset( $_POST['direktt_service_status_new_case_template'] ) ? intval( $_POST['direktt_service_status_new_case_template'] ) : 0 );
+		update_option( 'direktt_service_status_case_change_template', isset( $_POST['direktt_service_status_case_change_template'] ) ? intval( $_POST['direktt_service_status_case_change_template'] ) : 0 );
 		update_option( 'direktt_service_status_categories', isset( $_POST['direktt_service_status_categories'] ) ? intval( $_POST['direktt_service_status_categories'] ) : 0 );
 		update_option( 'direktt_service_status_tags', isset( $_POST['direktt_service_status_tags'] ) ? intval( $_POST['direktt_service_status_tags'] ) : 0 );
 		update_option( 'direktt_service_status_opening_status', isset( $_POST['direktt_service_status_opening_status'] ) ? intval( $_POST['direktt_service_status_opening_status'] ) : 0 );
@@ -533,7 +533,7 @@ function render_service_status_settings() {
 		'posts_per_page' => -1,
 		'orderby'        => 'title',
 		'order'          => 'ASC',
-		'meta_query'     => array(
+		'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- - Justification: bounded, cached, selective query on small dataset
 			array(
 				'key'     => 'direkttMTType',
 				'value'   => array( 'all', 'none' ),
@@ -699,16 +699,16 @@ function render_service_status_profile_tool() {
 	$subscription_id = isset( $_GET['subscriptionId'] ) ? sanitize_text_field( wp_unslash( $_GET['subscriptionId'] ) ) : false;
 	$profile_user    = Direktt_User::get_user_by_subscription_id( $subscription_id );
 	if ( ! $profile_user ) {
-		echo '<div class="notice notice-error"><p>' . esc_html__( 'User not found.', 'direktt' ) . '</p></div>';
+		echo '<div class="notice notice-error"><p>' . esc_html__( 'User not found.', 'direktt-service-status' ) . '</p></div>';
 		return;
 	}
 	$user_id = $profile_user['ID'];
 
-	if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['direktt_service_status_nonce'] ) && wp_verify_nonce( $_POST['direktt_service_status_nonce'], 'direktt_service_status_action' ) ) {
+	if ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['direktt_service_status_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['direktt_service_status_nonce'] ) ), 'direktt_service_status_action' ) ) {
 		if ( isset( $_POST['add_service_case'] ) && intval( $_POST['add_service_case'] ) === 1 ) {
-			$case_number      = sanitize_text_field( $_POST['case_number'] );
-			$case_description = sanitize_textarea_field( $_POST['case_description'] );
-			$case_status      = intval( $_POST['case_status'] );
+			$case_number      = isset( $_POST['case_number'] ) ? sanitize_text_field( wp_unslash( $_POST['case_number'] ) ) : '';
+			$case_description = isset( $_POST['case_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['case_description'] ) ) : '';
+			$case_status      = isset( $_POST['case_status'] ) ? intval( $_POST['case_status'] ) : 0;
 
 			$new_case = array(
 				'post_title'   => $case_number,
@@ -761,20 +761,28 @@ function render_service_status_profile_tool() {
 				}
 				update_post_meta( $case_id, 'direktt_service_status_change_log', $log );
 
-                $redirect_url = add_query_arg( 'success_flag', '1', $_SERVER['REQUEST_URI'] );
-                wp_safe_redirect( $redirect_url );
+				if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+					$redirect_url = home_url();
+				} else {
+					$redirect_url = add_query_arg( 'success_flag', '1', esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+				}
+				wp_safe_redirect( $redirect_url );
 				exit;
 			} else {
-                $redirect_url = add_query_arg( 'success_flag', '0', $_SERVER['REQUEST_URI'] );
+				if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+					$redirect_url = home_url();
+				} else {
+					$redirect_url = add_query_arg( 'success_flag', '0', esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+				}
 				wp_safe_redirect( $redirect_url );
 				exit;
 			}
 		}
 
 		if ( isset( $_POST['edit_service_case'] ) && intval( $_POST['edit_service_case'] ) === 1 ) {
-			$case_id          = intval( $_POST['case_id'] );
-			$case_description = sanitize_textarea_field( $_POST['case_description'] );
-			$case_status      = intval( $_POST['case_status'] );
+			$case_id          = isset( $_POST['case_id'] ) ? intval( wp_unslash( $_POST['case_id'] ) ) : 0;
+			$case_description = isset( $_POST['case_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['case_description'] ) ) : '';
+			$case_status      = isset( $_POST['case_status'] ) ? intval( wp_unslash( $_POST['case_status'] ) ) : 0;
 
 			$case_post = get_post( $case_id );
 			if ( $case_post ) {
@@ -787,11 +795,19 @@ function render_service_status_profile_tool() {
 
 				wp_set_object_terms( $case_id, array( $case_status ), 'case_status', false );
 
-                $redirect_url = add_query_arg( 'success_flag', '2', $_SERVER['REQUEST_URI'] );
+				if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+					$redirect_url = home_url();
+				} else {
+					$redirect_url = add_query_arg( 'success_flag', '2', esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+				}
 				wp_safe_redirect( $redirect_url );
 				exit;
 			} else {
-                $redirect_url = add_query_arg( 'success_flag', '3', $_SERVER['REQUEST_URI'] );
+				if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+					$redirect_url = home_url();
+				} else {
+					$redirect_url = add_query_arg( 'success_flag', '3', esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+				}
 				wp_safe_redirect( $redirect_url );
 				exit;
 			}
@@ -809,7 +825,7 @@ function render_service_status_profile_tool() {
 			'post_type'      => 'direktt_service_case',
 			'post_status'    => 'publish',
 			'posts_per_page' => -1,
-			'meta_query'     => array(
+			'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- - Justification: bounded, cached, selective query on small dataset
 				array(
 					'key'   => '_dss_direktt_subscription_id',
 					'value' => $subscription_id,
@@ -1298,14 +1314,15 @@ function render_service_status_profile_tool() {
 						<button id="save-case-form" class="button button-primary button-large"><?php echo esc_html__( 'Save Service Case', 'direktt-service-status' ); ?></button>
 						<button id="cancel-case-form" class="button-invert button-dark-gray"><?php echo esc_html__( 'Cancel', 'direktt-service-status' ); ?></button>
 					</div>
-					<h3>Activity log</h3>
+					<h3><?php echo esc_html__( 'Activity log', 'direktt-service-status' ); ?></h3>
 					<div class="form-log-list"></div>
 					<input type="hidden" id="case-form-id" value="" />
 				</form>
 			</div>
 		</div>
 		<?php
-        echo Direktt_Public::direktt_render_alert_popup( 'direktt-service-status-alert', '' );
+		$allowed_html = wp_kses_allowed_html( 'post' );
+        echo wp_kses( Direktt_Public::direktt_render_alert_popup( 'direktt-service-status-alert', '' ), $allowed_html );
         ?>
 	</div>
 	<?php
@@ -1331,7 +1348,7 @@ function direktt_service_status_get_status_list() {
 add_action( 'wp_ajax_direktt_search_service_cases', 'handle_direktt_search_service_cases' );
 
 function handle_direktt_search_service_cases() {
-	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'direktt_service_status_action' ) ) {
+	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'direktt_service_status_action' ) ) {
 		wp_send_json_error( esc_html__( 'Invalid nonce.', 'direktt-service-status' ) );
 		wp_die();
 	}
@@ -1362,7 +1379,7 @@ function handle_direktt_search_service_cases() {
 	$case            = $cases[0];
 	$subscription_id = get_post_meta( $case->ID, '_dss_direktt_subscription_id', true );
 	if ( isset( $_POST['subscription_id'] ) ) {
-		$profile_subscription_id = sanitize_text_field( $_POST['subscription_id'] );
+		$profile_subscription_id = sanitize_text_field( wp_unslash( $_POST['subscription_id'] ) );
 		if ( $subscription_id !== $profile_subscription_id ) {
 			wp_send_json_error( esc_html__( 'No service case found.', 'direktt-service-status' ) );
 			wp_die();
@@ -1414,7 +1431,7 @@ function handle_direktt_search_service_cases() {
 add_action( 'wp_ajax_direktt_search_service_cases_id', 'handle_direktt_search_service_cases_id' );
 
 function handle_direktt_search_service_cases_id() {
-	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'direktt_service_status_action' ) ) {
+	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'direktt_service_status_action' ) ) {
 		wp_send_json_error( esc_html__( 'Invalid nonce.', 'direktt-service-status' ) );
 		wp_die();
 	}
@@ -1504,12 +1521,12 @@ function direktt_add_service_case_shortcode() {
 	echo '<div id="direktt-profile-data" class="direktt-profile-data-service-status-tool direktt-service">';
 	echo '<h2>' . esc_html__( 'Service Status Management', 'direktt-service-status' ) . '</h2>';
 	if ( $eligible ) {
-		if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['direktt_service_status_nonce'] ) && wp_verify_nonce( $_POST['direktt_service_status_nonce'], 'direktt_service_status_action' ) ) {
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['direktt_service_status_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['direktt_service_status_nonce'] ) ), 'direktt_service_status_action' ) ) {
 			if ( isset( $_POST['add_service_case'] ) && intval( $_POST['add_service_case'] ) === 1 ) {
-				$case_number      = sanitize_text_field( $_POST['case_number'] );
-				$case_user_id     = sanitize_text_field( $_POST['case_user_id'] );
-				$case_description = sanitize_textarea_field( $_POST['case_description'] );
-				$case_status      = intval( $_POST['case_status'] );
+				$case_number      = isset( $_POST['case_number'] ) ? sanitize_text_field( wp_unslash( $_POST['case_number'] ) ) : '';
+				$case_user_id     = isset( $_POST['case_user_id'] ) ? sanitize_text_field( wp_unslash( $_POST['case_user_id'] ) ) : '';
+				$case_description = isset( $_POST['case_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['case_description'] ) ) : '';
+				$case_status      = isset( $_POST['case_status'] ) ? intval( wp_unslash( $_POST['case_status'] ) ) : 0;
 
 				$new_case = array(
 					'post_title'   => $case_number,
@@ -1557,20 +1574,28 @@ function direktt_add_service_case_shortcode() {
 					}
 					update_post_meta( $case_id, 'direktt_service_status_change_log', $log );
 
-                    $redirect_url = add_query_arg( 'success_flag', '1', $_SERVER['REQUEST_URI'] );
+					if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+						$redirect_url = home_url();
+					} else {
+						$redirect_url = add_query_arg( 'success_flag', '1', esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+					}
 					wp_safe_redirect( $redirect_url );
 					exit;
 				} else {
-                    $redirect_url = add_query_arg( 'success_flag', '0', $_SERVER['REQUEST_URI'] );
+					if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+						$redirect_url = home_url();
+					} else {
+						$redirect_url = add_query_arg( 'success_flag', '0', esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+					}
 					wp_safe_redirect( $redirect_url );
 					exit;
 				}
 			}
 
 			if ( isset( $_POST['edit_service_case'] ) && intval( $_POST['edit_service_case'] ) === 1 ) {
-				$case_id          = intval( $_POST['case_id'] );
-				$case_description = sanitize_textarea_field( $_POST['case_description'] );
-				$case_status      = intval( $_POST['case_status'] );
+				$case_id          = isset( $_POST['case_id'] ) ? intval( wp_unslash( $_POST['case_id'] ) ) : 0;
+				$case_description = isset( $_POST['case_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['case_description'] ) ) : '';
+				$case_status      = isset( $_POST['case_status'] ) ? intval( wp_unslash( $_POST['case_status'] ) ) : 0;
 
 				$case_post = get_post( $case_id );
 				if ( $case_post ) {
@@ -1583,11 +1608,19 @@ function direktt_add_service_case_shortcode() {
 
 					wp_set_object_terms( $case_id, array( $case_status ), 'case_status', false );
 
-                    $redirect_url = add_query_arg( 'success_flag', '2', $_SERVER['REQUEST_URI'] );
+					if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+						$redirect_url = home_url();
+					} else {
+						$redirect_url = add_query_arg( 'success_flag', '2', esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+					}
 					wp_safe_redirect( $redirect_url );
 					exit;
 				} else {
-                    $redirect_url = add_query_arg( 'success_flag', '3', $_SERVER['REQUEST_URI'] );
+					if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+						$redirect_url = home_url();
+					} else {
+						$redirect_url = add_query_arg( 'success_flag', '3', esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+					}
 					wp_safe_redirect( $redirect_url );
 					exit;
 				}
@@ -2135,7 +2168,8 @@ function direktt_add_service_case_shortcode() {
 				</div>
 			</div>
             <?php
-            echo Direktt_Public::direktt_render_alert_popup( 'direktt-service-status-alert', '' );
+			$allowed_html = wp_kses_allowed_html( 'post' );
+            echo wp_kses( Direktt_Public::direktt_render_alert_popup( 'direktt-service-status-alert', '' ), $allowed_html );
             ?>
 		</div>
 		<?php
@@ -2161,7 +2195,7 @@ function direktt_add_service_case_shortcode() {
 			'post_type'      => 'direktt_service_case',
 			'post_status'    => 'publish',
 			'posts_per_page' => -1,
-			'meta_query'     => array(
+			'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- - Justification: bounded, cached, selective query on small dataset
 				array(
 					'key'   => '_dss_direktt_subscription_id',
 					'value' => $subscription_id,
