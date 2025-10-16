@@ -96,11 +96,11 @@ add_action( 'admin_enqueue_scripts', 'direktt_service_status_enqueue_admin_asset
 function direktt_service_status_enqueue_admin_assets( $hook ) {
 	$screen = get_current_screen();
 	if ( in_array( $hook, array( 'post.php', 'post-new.php' ) ) && $screen->post_type === 'direktt_service_case' ) {
-		wp_register_style( 'jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', array(), '1.12.1' );
+		wp_register_style( 'jquery-ui-css', plugins_url( 'assets/css/jquery-ui.css', __FILE__ ), array(), '1.12.1' );
 		wp_enqueue_style( 'jquery-ui-css' );
 		wp_enqueue_script( 'jquery-ui-autocomplete' );
-		wp_enqueue_script( 'direktt-service-status', plugins_url( 'direktt-service-status.js', __FILE__ ), array( 'jquery' ), filemtime( plugin_dir_path( __FILE__ ) . 'direktt-service-status.js' ), true );
-		wp_enqueue_style( 'direktt-service-status-style', plugins_url( 'direktt-service-status.css', __FILE__ ), array(), filemtime( plugin_dir_path( __FILE__ ) . 'direktt-service-status.css' ) );
+		wp_enqueue_script( 'direktt-service-status', plugins_url( 'assets/js/direktt-service-status.js', __FILE__ ), array( 'jquery' ), filemtime( plugin_dir_path( __FILE__ ) . 'assets/js/direktt-service-status.js' ), true );
+		wp_enqueue_style( 'direktt-service-status-style', plugins_url( 'assets/css/direktt-service-status.css', __FILE__ ), array(), filemtime( plugin_dir_path( __FILE__ ) . 'assets/css/direktt-service-status.css' ) );
 	}
 }
 
@@ -109,7 +109,7 @@ add_action( 'wp_enqueue_scripts', 'direktt_dss_enqueue_fe_assets' );
 function direktt_dss_enqueue_fe_assets( $hook ) {
 	global $enqueue_direktt_case_script;
 	if ( $enqueue_direktt_case_script ) {
-		wp_register_style( 'jquery-ui-css', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', array(), '1.12.1' );
+		wp_register_style( 'jquery-ui-css', plugins_url( 'assets/css/jquery-ui.css', __FILE__ ), array(), '1.12.1' );
 		wp_enqueue_style( 'jquery-ui-css' );
 		wp_enqueue_script( 'jquery-ui-autocomplete' );
 	}
@@ -170,6 +170,7 @@ function dss_direktt_subscription_id_meta_box_callback( $post ) {
 	?>
 	<label for="dss_direktt_subscription_id_input"><?php echo esc_html__( 'Enter the ID:', 'direktt-service-status' ); ?></label>
 	<input type="text" id="dss_direktt_subscription_id_input" name="dss_direktt_subscription_id_input" value="<?php echo esc_attr( $subscription_id ); ?>" placeholder="<?php echo esc_attr__( 'Enter the ID...', 'direktt-service-status' ); ?>" />
+	<?php wp_nonce_field( 'dss_direktt_subscription_id_nonce_action', 'dss_direktt_subscription_id_nonce' ); ?>
 	<input type="hidden" id="dss_all_ids" name="dss_all_ids" value="<?php echo esc_attr( wp_json_encode( array_values( array_map( 'strval', $all_ids ) ) ) ); ?>" />
 	<?php
 }
@@ -276,7 +277,7 @@ function direktt_save_service_case_post( $post_id ) {
 
 	$subscription_id = get_post_meta( $post_id, '_dss_direktt_subscription_id', true );
 
-	if ( isset( $_POST['dss_direktt_subscription_id_input'] ) ) {
+	if ( isset( $_POST['dss_direktt_subscription_id_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['dss_direktt_subscription_id_nonce'] ) ), 'dss_direktt_subscription_id_nonce_action' ) && isset( $_POST['dss_direktt_subscription_id_input'] ) ) {
 		$subscription_id = trim( sanitize_text_field( wp_unslash( $_POST['dss_direktt_subscription_id_input'] ) ) );
 		update_post_meta( $post_id, '_dss_direktt_subscription_id', $subscription_id );
 	}
@@ -683,7 +684,7 @@ function setup_service_status_profile_tools() {
 			'cssEnqueueArray' => array(
 				array(
 					'handle' => 'jquery-ui-css',
-					'src'    => 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css',
+					'src'    => plugins_url( 'assets/css/jquery-ui.css', __FILE__ ),
 				),
 			),
 			'jsEnqueueArray'  => array(
