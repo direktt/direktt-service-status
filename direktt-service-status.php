@@ -1000,7 +1000,7 @@ function render_service_status_profile_tool() {
 							caseData = caseData[0];
 							$('.direktt-service-status-wrapper').hide();
 							$('.direktt-service-status-case-form').show();
-							$('.direktt-service-status-case-form h2').text('<?php echo esc_js( 'Edit Service Case', 'direktt-service-status' ); ?>');
+							$('.direktt-service-status-case-form h3').text('<?php echo esc_js( 'Edit Service Case', 'direktt-service-status' ); ?>');
 							$('#case-form-id').val(caseData.id);
 							$('#case-form-number').val(caseData.title);
 							$('#case-form-number').prop('disabled', true);
@@ -1304,7 +1304,7 @@ function render_service_status_profile_tool() {
 		</div>
 		<div class="direktt-service-status-case-form" style="display: none;">
 			<div class="direktt-service-status-case-form-wrapper">
-				<h2></h2>
+				<h3></h3>
 				<form method="post">
 					<?php wp_nonce_field( 'direktt_service_status_action', 'direktt_service_status_nonce' ); ?>
 					
@@ -2064,7 +2064,8 @@ function direktt_add_service_case_shortcode() {
 							?>
 							<div class="case-item">
 								<h3><?php echo esc_html( $case->post_title ); ?></h3>
-								<div div class="direktt-service-status-user"><strong><?php echo esc_html__( 'User:', 'direktt-service-status' ); ?> </strong><span><?php echo esc_html( $display_name ) . ' (' . esc_html( $case_user_id ) . ')'; ?></span></div>
+								<div div class="direktt-service-status-user"><strong><?php echo esc_html__( 'User:', 'direktt-service-status' ); ?> </strong><span><?php echo esc_html( $display_name ); ?></span></div>
+								<div div class="direktt-service-status-user-id"><strong><?php echo esc_html__( 'User Id:', 'direktt-service-status' ); ?> </strong><span><?php echo esc_html( $case_user_id ) . ')'; ?></span></div>
 								<div div class="direktt-service-status-description"><strong><?php echo esc_html__( 'Description:', 'direktt-service-status' ); ?> </strong><span><?php echo esc_html( wp_trim_words( $case->post_content, 10, '...' ) ?: '/' ); ?></span></div>
 								<div div class="direktt-service-status-status"><strong><?php echo esc_html__( 'Status:', 'direktt-service-status' ); ?> </strong><?php echo esc_html( $case_status ); ?></div>
 								<?php
