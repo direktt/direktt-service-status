@@ -1,4 +1,4 @@
-# Direktt Loyalty Program
+# Direktt Service Status
 
 A powerful WordPress plugin for managing service cases system, tightly integrated with the [Direktt WordPress Plugin](https://direktt.com/).
 
@@ -24,7 +24,7 @@ A powerful WordPress plugin for managing service cases system, tightly integrate
 
 ### Admin Interface
 
-- Find **Direktt > Settings > Loyalty Program Settings** in your WordPress admin menu.
+- Find **Direktt > Settings > Service Status Settings** in your WordPress admin menu.
 - Configure:
     - Set up notifications for users on new case creation and case status change.
     - Which user category/tag will be able to open/manage cases.
