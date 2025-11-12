@@ -74,7 +74,7 @@ Direktt Message templates support following dynamic placeholders:
 
 ## Case Status Change Logs
 
-For every case status creating or change, an entry is made with admin name (not visible to user), subscription id (not visible to usr), old status, new status and timestamp.
+For every case status creation or change, a log entry is created with the reference to user who initiated the action, subscription id, old status, new status and timestamp.
 
 ---
 
