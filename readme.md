@@ -42,13 +42,11 @@ https://github.com/direktt/direktt-service-status/wiki
 - Configure:
     - Set up all service statuses in your workflow **(e.g. "Waiting for inspection", "Inspected, service order created, waiting for service", "Service in progress", "Service finished, ready for pick up", "Closed")**.
 
-### Case Management
+### Workflow
 
-- Add service case via wp-admin/Direktt User profile/shortcode.
-- Set the case title and case description (optional).
-- If you are adding service case via wp-admin or shortcode, you will need to enter user's Subscription ID.
-- Edit service cases via wp-admin/Direktt User profile/shortcode.
-- All actions are logged in the user’s **service status change log**.
+- Customer requests a service (landscaping, carpet cleaning, construction services...) or drops off an item for service (car, motorbike, skis...) Serviceperson **creates new service case** via Direktt mobile app or wp-admin. Customer receives initial automated message notification about creation of service case.
+- As the service progresses through stages, serviceperson **sets respective service case statuses** using Direktt mobile app or wp-admin. Customer receives automated message notifications on each status change all up to the service closing status.
+- All actions are logged in the customer’s **service status change log**.
 
 ### Shortcode (Front End)
 
