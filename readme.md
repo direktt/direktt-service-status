@@ -34,13 +34,13 @@ https://github.com/direktt/direktt-service-status/wiki
 
 - Find **Direktt > Settings > Service Status Settings** in your WordPress admin menu.
 - Configure:
-    - Set up notifications for users on new case creation and case status change.
-    - Which user category/tag will be able to open/manage cases.
-    - Set up opening (first in chain) and closing status (last in chain).
+    - Direktt user category/tag allowed to manage service cases.
+    - Notifications for users on new case creation and case status change.
+    - Opening (first in chain ) and closing status (last in chain).
 
 - Find **Direktt > Service Case Status**
 - Configure:
-    - Set up few statuses which you will use (f.e. "Opening", "Pending", "In Progress", "Closed").
+    - Set up all service statuses in your workflow (e.g. "Waiting for inspection", "Inspected, service order created, waiting for service", "Service in progress", "Service finished, ready for pick up", "Closed").
 
 ### Case Management
 
