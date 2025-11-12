@@ -44,7 +44,7 @@ https://github.com/direktt/direktt-service-status/wiki
 
 ### Workflow
 
-- Customer **requests a service** (landscaping, carpet cleaning, construction services...) or **drops off an item for service** (car, motorbike, skis...) Serviceperson **creates new service case** via Direktt mobile app or wp-admin. Customer receives initial automated message notification about creation of service case.
+- Customer **requests a service** (landscaping, carpet cleaning, construction services...) or **drops off an item for service** (car, bicycle, skis...) Serviceperson **creates new service case** via Direktt mobile app or wp-admin. Customer receives initial automated message notification about creation of service case.
 - As the service progresses through stages, serviceperson **sets respective service case statuses** using Direktt mobile app or wp-admin. Customer receives automated message notifications on each status change all up to the service closing status.
 - All actions are logged in the customer’s **service status change log**.
 
