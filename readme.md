@@ -1,28 +1,36 @@
 # Direktt Service Status
 
-A powerful WordPress plugin for managing service cases system, tightly integrated with the [Direktt WordPress Plugin](https://direktt.com/).
+It is tightly integrated with the [Direktt WordPress Plugin](https://wordpress.org/plugins/direktt/).  
 
-- **Create Service Cases** for users via the admin interface, custom user profile tool and shortcode.
-- **Send customizable notifications** to users on creating new case and case status changes.
-- **Review full case history** for every user via wp-admin, user profile tool or shortcode.
-- **Display active cases & history** to users via a simple shortcode.
+With Service Status extension you can:
+
+- **Create and Manage Service Cases** as a serviceperson either using Direktt mobile app or wp-admin.
+- **Display active cases & history** to users in Direktt mobile app.
+- **Send customizable notifications** to users to notify them of new service case creation or case status changes.
+- **Review full case history** for every serviceperson using Direktt mobile app or wp-admin.
+
+## Documentation
+
+You can find the detailed plugin documentation, guides and tutorials in the Wiki section:  
+https://github.com/direktt/direktt-service-status/wiki
 
 ## Requirements
 
-- WordPress 5.0 or higher
+- WordPress 5.6 or higher
 - The [Direktt Plugin](https://wordpress.org/plugins/direktt/) (must be active)
 
 ## Installation
 
 1. Install and activate the **Direktt** core plugin.
 2. Download the direktt-service-status.zip from the latest [release](https://github.com/direktt/direktt-service-status/releases)
-2. Upload **direktt-service-status.zip** either through WordPress' **Plugins > Add Plugin > Upload Plugin** or upload the contents of this direktt-service-status.zip to the `/wp-content/plugins/` directory of your WordPress installation.
-3. Activate **Direktt Service Status** from your WordPress plugins page.
-4. Configure the plugin under **Direktt > Settings > Service Status Settings**.
+3. Upload **direktt-service-status.zip** either through WordPress' **Plugins > Add Plugin > Upload Plugin** or upload the contents of this direktt-service-status.zip to the `/wp-content/plugins/` directory of your WordPress installation.
+4. Activate **Direktt Service Status** from your WordPress plugins page.
+5. Create Service Case Statuses in wp-admin **Direktt > Service Case Status**
+6. Configure the plugin under **Direktt > Settings > Service Status Settings**.
 
 ## Usage
 
-### Admin Interface
+### Plugin Settings
 
 - Find **Direktt > Settings > Service Status Settings** in your WordPress admin menu.
 - Configure:
