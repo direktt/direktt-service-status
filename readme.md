@@ -80,7 +80,10 @@ For every case status creation or change, a log entry is created with the refere
 
 ## Updating
 
-The plugin supports updating directly from this GitHub repository.
+The plugin supports updates directly from WordPress admin console.  
+
+You can find all plugin releases in the Releases section of this repository:  
+https://github.com/direktt/direktt-service-status/releases.
 
 ---
 
@@ -92,4 +95,9 @@ GPL-2.0-or-later
 
 ## Support
 
-Contact [Direktt](https://direktt.com/) for questions, issues, or contributions.
+Please use Issues section of this repository for any issue you might have:  
+https://github.com/direktt/direktt-service-status/issues.  
+
+Join Direktt Community on Discord - [Direktt Discord Server](https://discord.gg/xaFWtbpkWp)  
+
+Contact [Direktt](https://direktt.com/) for general questions, issues, or contributions.
