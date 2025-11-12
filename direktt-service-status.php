@@ -575,38 +575,7 @@ function render_service_status_settings() {
 
 			<table class="form-table">
 				<tr>
-					<th scope="row"><label for="direktt_service_status_new_case_template"><?php echo esc_html__( 'New Case Message Template', 'direktt-service-status' ); ?></label></th>
-					<td>
-						<select name="direktt_service_status_new_case_template" id="direktt_service_status_new_case_template">
-							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
-							<?php foreach ( $template_posts as $post ) : ?>
-								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $new_case_template, $post->ID ); ?>>
-									<?php echo esc_html( $post->post_title ); ?>
-								</option>
-							<?php endforeach; ?>
-						</select>
-						<p class="description"><?php echo esc_html__( 'In message template you can use', 'direktt-service-status' ); ?> <?php echo esc_html( '#case-no#' ); ?> <?php echo esc_html__( 'which will be replaced with case number', 'direktt-service-status' ); ?></p>
-						<p class="description"><?php echo esc_html__( 'and', 'direktt-service-status' ); ?> <?php echo esc_html( '#date-time#' ); ?> <?php echo esc_html__( 'for date and time when case was opened.', 'direktt-service-status' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="direktt_service_status_case_change_template"><?php echo esc_html__( 'Case Status Change Message Template', 'direktt-service-status' ); ?></label></th>
-					<td>
-						<select name="direktt_service_status_case_change_template" id="direktt_service_status_case_change_template">
-							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
-							<?php foreach ( $template_posts as $post ) : ?>
-								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $case_change_template, $post->ID ); ?>>
-									<?php echo esc_html( $post->post_title ); ?>
-								</option>
-							<?php endforeach; ?>
-						</select>
-						<p class="description"><?php echo esc_html__( 'In message template you can use', 'direktt-service-status' ); ?> <?php echo esc_html( '#case-no#' ); ?> <?php echo esc_html__( 'which will be replaced with case number,', 'direktt-service-status' ); ?></p>
-						<p class="description"><?php echo esc_html( '#old-status#' ); ?> <?php echo esc_html__( 'for old status and', 'direktt-service-status' ); ?> <?php echo esc_html( '#new-status#' ); ?> <?php echo esc_html__( 'for new status', 'direktt-service-status' ); ?></p>
-						<p class="description"><?php echo esc_html__( 'and', 'direktt-service-status' ); ?> <?php echo esc_html( '#date-time#' ); ?> <?php echo esc_html__( 'for date and time when case status was changed.', 'direktt-service-status' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="direktt_service_status_categories"><?php echo esc_html__( 'Category', 'direktt-service-status' ); ?></label></th>
+					<th scope="row"><label for="direktt_service_status_categories"><?php echo esc_html__( 'Serviceperson Category', 'direktt-service-status' ); ?></label></th>
 					<td>
 						<select name="direktt_service_status_categories" id="direktt_service_status_categories">
 							<option value="0"><?php echo esc_html__( 'Select Category', 'direktt-service-status' ); ?></option>
@@ -620,7 +589,7 @@ function render_service_status_settings() {
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="direktt_service_status_tags"><?php echo esc_html__( 'Tag', 'direktt-service-status' ); ?></label></th>
+					<th scope="row"><label for="direktt_service_status_tags"><?php echo esc_html__( 'Serviceperson Tag', 'direktt-service-status' ); ?></label></th>
 					<td>
 						<select name="direktt_service_status_tags" id="direktt_service_status_tags">
 							<option value="0"><?php echo esc_html__( 'Select Tag', 'direktt-service-status' ); ?></option>
@@ -631,6 +600,40 @@ function render_service_status_settings() {
 							<?php endforeach; ?>
 						</select>
 						<p class="description"><?php echo esc_html__( 'Users with this tag will be able to open/manage service cases.', 'direktt-service-status' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="direktt_service_status_new_case_template"><?php echo esc_html__( 'New Case Message Template', 'direktt-service-status' ); ?></label></th>
+					<td>
+						<select name="direktt_service_status_new_case_template" id="direktt_service_status_new_case_template">
+							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
+							<?php foreach ( $template_posts as $post ) : ?>
+								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $new_case_template, $post->ID ); ?>>
+									<?php echo esc_html( $post->post_title ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+						<p class="description"><?php echo esc_html__( 'You can use following dynamic placeholders in this template:', 'direktt-loyalty-program' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#case-no#' ); ?></code> <?php echo esc_html__( ' - service case title', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#date-time#' ); ?></code> <?php echo esc_html__( ' - date and time when case was opened.', 'direktt-service-status' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="direktt_service_status_case_change_template"><?php echo esc_html__( 'Case Status Change Message Template', 'direktt-service-status' ); ?></label></th>
+					<td>
+						<select name="direktt_service_status_case_change_template" id="direktt_service_status_case_change_template">
+							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
+							<?php foreach ( $template_posts as $post ) : ?>
+								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $case_change_template, $post->ID ); ?>>
+									<?php echo esc_html( $post->post_title ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+						<p class="description"><?php echo esc_html__( 'You can use following dynamic placeholders in this template:', 'direktt-loyalty-program' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#case-no#' ); ?></code> <?php echo esc_html__( ' - service case title', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#old-status#' ); ?></code> <?php echo esc_html__( ' - old service status', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#new-status#' ); ?></code> <?php echo esc_html__( ' - new service status', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#date-time#' ); ?></code> <?php echo esc_html__( ' - date and time when case was opened.', 'direktt-service-status' ); ?></p>
 					</td>
 				</tr>
 				<tr>
