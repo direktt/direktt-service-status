@@ -631,9 +631,9 @@ function render_service_status_settings() {
 						</select>
 						<p class="description"><?php echo esc_html__( 'You can use following dynamic placeholders in this template:', 'direktt-loyalty-program' ); ?></p>
 						<p class="description"><code><?php echo esc_html( '#case-no#' ); ?></code> <?php echo esc_html__( ' - service case title', 'direktt-service-status' ); ?></p>
-						<p class="description"><code><?php echo esc_html( '#old-status#' ); ?></code> <?php echo esc_html__( ' - old service status', 'direktt-service-status' ); ?></p>
-						<p class="description"><code><?php echo esc_html( '#new-status#' ); ?></code> <?php echo esc_html__( ' - new service status', 'direktt-service-status' ); ?></p>
-						<p class="description"><code><?php echo esc_html( '#date-time#' ); ?></code> <?php echo esc_html__( ' - date and time when case was opened.', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#old-status#' ); ?></code> <?php echo esc_html__( ' - old service case status', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#new-status#' ); ?></code> <?php echo esc_html__( ' - new service case status', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#date-time#' ); ?></code> <?php echo esc_html__( ' - date and time when case was changed/updated.', 'direktt-service-status' ); ?></p>
 					</td>
 				</tr>
 				<tr>
