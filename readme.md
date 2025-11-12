@@ -57,9 +57,11 @@ https://github.com/direktt/direktt-service-status/wiki
 
 ### Shortcode (Front End)
 
-Show the all non-closed cases (only to Direktt Admin and users that are able top manage cases) and current user's non-closed cases to Direktt user:
-
 ```[direktt_service_case]```
+
+Using this shortcode, you can display the following:
+- Current user's non-closed cases and their service case history **(customers)**
+- All non-closed cases with the service history **(channel admins and servicepersons)**
 
 ## Notification Templates
 
