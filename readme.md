@@ -40,7 +40,7 @@ https://github.com/direktt/direktt-service-status/wiki
 
 - Find **Direktt > Service Case Status**
 - Configure:
-    - Set up all service statuses in your workflow (e.g. "Waiting for inspection", "Inspected, service order created, waiting for service", "Service in progress", "Service finished, ready for pick up", "Closed").
+    - Set up all service statuses in your workflow **(e.g. "Waiting for inspection", "Inspected, service order created, waiting for service", "Service in progress", "Service finished, ready for pick up", "Closed")**.
 
 ### Case Management
 
