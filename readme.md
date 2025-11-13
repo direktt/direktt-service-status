@@ -1,5 +1,7 @@
 # Direktt Service Status
 
+Direktt Service Status is a WordPress plugin that empowers you to create, manage, and track service cases directly from the Direktt mobile app or WordPress admin. Fully integrated with the [Direktt mobile app](https://direktt.com/), it keeps clients informed with automated notifications at every step, while offering real-time access to active cases and history—all fully integrated with your existing Direktt workflow. Perfect for any service-based business aiming to boost transparency, accountability, and client satisfaction.
+
 It is tightly integrated with the [Direktt WordPress Plugin](https://wordpress.org/plugins/direktt/).  
 
 With Service Status extension you can:
