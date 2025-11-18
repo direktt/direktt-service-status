@@ -308,15 +308,31 @@ function direktt_save_service_case_post( $post_id ) {
 	$case_opened_flag = get_post_meta( $post_id, '_dss_case_opened_flag', true );
 	if ( empty( $case_opened_flag ) && ! empty( $subscription_id ) ) {
 		$subscription_id   = get_post_meta( $post_id, '_dss_direktt_subscription_id', true );
+		$new_case_user     = get_option( 'direktt_service_status_new_case_user', 'no' ) === 'yes';
 		$new_case_template = intval( get_option( 'direktt_service_status_new_case_template', 0 ) );
-		Direktt_Message::send_message_template(
-			array( $subscription_id ),
-			$new_case_template,
-			array(
-				'case-no'   => $post->post_title,
-				'date-time' => current_time( 'mysql' ),
-			)
-		);
+		if ( $new_case_user && $new_case_template !== 0 ) {
+			Direktt_Message::send_message_template(
+				array( $subscription_id ),
+				$new_case_template,
+				array(
+					'case-no'   => $post->post_title,
+					'date-time' => current_time( 'mysql' ),
+				)
+			);
+		}
+
+		$new_case_admin	         = get_option( 'direktt_service_status_new_case_admin', 'no' ) === 'yes';
+		$new_case_admin_template = intval( get_option( 'direktt_service_status_new_case_admin_template', 0 ) );
+		if ( $new_case_admin && $new_case_admin_template !== 0 ) {
+			Direktt_Message::send_message_template_to_admin(
+				$new_case_admin_template,
+				array(
+					'case-no'   => $post->post_title,
+					'date-time' => current_time( 'mysql' ),
+				)
+			);
+		}
+
 		update_post_meta( $post_id, '_dss_case_opened_flag', '1' );
 
 		global $direktt_user;
@@ -491,17 +507,33 @@ function direktt_log_case_status_change( $object_id, $terms, $tt_ids, $taxonomy,
 
 		$post                 = get_post( $object_id );
 		$subscription_id      = get_post_meta( $object_id, '_dss_direktt_subscription_id', true );
+		$case_change_user     = get_option( 'direktt_service_status_case_change_user', 'no' ) === 'yes';
 		$case_change_template = intval( get_option( 'direktt_service_status_case_change_template', 0 ) );
-		Direktt_Message::send_message_template(
-			array( $subscription_id ),
-			$case_change_template,
-			array(
-				'case-no'    => $post->post_title,
-				'date-time'  => current_time( 'mysql' ),
-				'old-status' => $old_term ? get_term( $old_term )->name : 'None',
-				'new-status' => $old_term ? get_term( $new_term )->name : 'None',
-			)
-		);
+		if ( $case_change_user && $case_change_template !== 0 ) {
+			Direktt_Message::send_message_template(
+				array( $subscription_id ),
+				$case_change_template,
+				array(
+					'case-no'    => $post->post_title,
+					'date-time'  => current_time( 'mysql' ),
+					'old-status' => $old_term ? get_term( $old_term )->name : 'None',
+					'new-status' => $old_term ? get_term( $new_term )->name : 'None',
+				)
+			);
+		}
+		$case_change_admin	        = get_option( 'direktt_service_status_case_change_admin', 'no' ) === 'yes';
+		$case_change_admin_template = intval( get_option( 'direktt_service_status_case_change_admin_template', 0 ) );
+		if ( $case_change_admin && $case_change_admin_template !== 0 ) {
+			Direktt_Message::send_message_template_to_admin(
+				$case_change_admin_template,
+				array(
+					'case-no'    => $post->post_title,
+					'date-time'  => current_time( 'mysql' ),
+					'old-status' => $old_term ? get_term( $old_term )->name : 'None',
+					'new-status' => $old_term ? get_term( $new_term )->name : 'None',
+				)
+			);
+		}
 	}
 	update_post_meta( $object_id, 'direktt_service_status_change_log', $log );
 }
@@ -525,8 +557,14 @@ function render_service_status_settings() {
 	// Handle form submission
 	if ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['direktt_admin_service_status_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['direktt_admin_service_status_nonce'] ) ), 'direktt_admin_service_status_save' ) ) {
 		// update options based on form submission
+		update_option( 'direktt_service_status_new_case_user', isset( $_POST['direktt_service_status_new_case_user'] ) ? 'yes' : 'no' );
 		update_option( 'direktt_service_status_new_case_template', isset( $_POST['direktt_service_status_new_case_template'] ) ? intval( $_POST['direktt_service_status_new_case_template'] ) : 0 );
+		update_option( 'direktt_service_status_new_case_admin', isset( $_POST['direktt_service_status_new_case_admin'] ) ? 'yes' : 'no' );
+		update_option( 'direktt_service_status_new_case_admin_template', isset( $_POST['direktt_service_status_new_case_admin_template'] ) ? intval( $_POST['direktt_service_status_new_case_admin_template'] ) : 0 );
+		update_option( 'direktt_service_status_case_change_user', isset( $_POST['direktt_service_status_case_change_user'] ) ? 'yes' : 'no' );
 		update_option( 'direktt_service_status_case_change_template', isset( $_POST['direktt_service_status_case_change_template'] ) ? intval( $_POST['direktt_service_status_case_change_template'] ) : 0 );
+		update_option( 'direktt_service_status_case_change_admin', isset( $_POST['direktt_service_status_case_change_admin'] ) ? 'yes' : 'no' );
+		update_option( 'direktt_service_status_case_change_admin_template', isset( $_POST['direktt_service_status_case_change_admin_template'] ) ? intval( $_POST['direktt_service_status_case_change_admin_template'] ) : 0 );
 		update_option( 'direktt_service_status_categories', isset( $_POST['direktt_service_status_categories'] ) ? intval( $_POST['direktt_service_status_categories'] ) : 0 );
 		update_option( 'direktt_service_status_tags', isset( $_POST['direktt_service_status_tags'] ) ? intval( $_POST['direktt_service_status_tags'] ) : 0 );
 		update_option( 'direktt_service_status_opening_status', isset( $_POST['direktt_service_status_opening_status'] ) ? intval( $_POST['direktt_service_status_opening_status'] ) : 0 );
@@ -536,12 +574,18 @@ function render_service_status_settings() {
 	}
 
 	// Load stored values
-	$new_case_template    = get_option( 'direktt_service_status_new_case_template', 0 );
-	$case_change_template = get_option( 'direktt_service_status_case_change_template', 0 );
-	$categories           = get_option( 'direktt_service_status_categories', 0 );
-	$tags                 = get_option( 'direktt_service_status_tags', 0 );
-	$opening_status       = get_option( 'direktt_service_status_opening_status', 0 );
-	$closing_status       = get_option( 'direktt_service_status_closing_status', 0 );
+	$new_case_user              = get_option( 'direktt_service_status_new_case_user', 'no' ) === 'yes';
+	$new_case_template          = get_option( 'direktt_service_status_new_case_template', 0 );
+	$new_case_admin             = get_option( 'direktt_service_status_new_case_admin', 'no' ) === 'yes';
+	$new_case_admin_template    = get_option( 'direktt_service_status_new_case_admin_template', 0 );
+	$case_change_user           = get_option( 'direktt_service_status_case_change_user', 'no' ) === 'yes';
+	$case_change_template       = get_option( 'direktt_service_status_case_change_template', 0 );
+	$case_change_admin          = get_option( 'direktt_service_status_case_change_admin', 'no' ) === 'yes';
+	$case_change_admin_template = get_option( 'direktt_service_status_case_change_admin_template', 0 );
+	$categories                 = get_option( 'direktt_service_status_categories', 0 );
+	$tags                       = get_option( 'direktt_service_status_tags', 0 );
+	$opening_status             = get_option( 'direktt_service_status_opening_status', 0 );
+	$closing_status             = get_option( 'direktt_service_status_closing_status', 0 );
 
 	// Query for template posts
 	$template_args  = array(
@@ -573,69 +617,36 @@ function render_service_status_settings() {
 		<form method="post" action="">
 			<?php wp_nonce_field( 'direktt_admin_service_status_save', 'direktt_admin_service_status_nonce' ); ?>
 
-			<table class="form-table">
+			<h2 class="title"><?php echo esc_html__( 'General Settings', 'direktt-service-status' ); ?></h2>
+			<table class="form-table direktt-service-status-table">
 				<tr>
-					<th scope="row"><label for="direktt_service_status_categories"><?php echo esc_html__( 'Serviceperson Category', 'direktt-service-status' ); ?></label></th>
-					<td>
-						<select name="direktt_service_status_categories" id="direktt_service_status_categories">
-							<option value="0"><?php echo esc_html__( 'Select Category', 'direktt-service-status' ); ?></option>
-							<?php foreach ( $all_categories as $category ) : ?>
-								<option value="<?php echo esc_attr( $category['value'] ); ?>" <?php selected( $categories, $category['value'] ); ?>>
-									<?php echo esc_html( $category['name'] ); ?>
-								</option>
-							<?php endforeach; ?>
-						</select>
-						<p class="description"><?php echo esc_html__( 'Users with this category will be able to open/manage service cases.', 'direktt-service-status' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="direktt_service_status_tags"><?php echo esc_html__( 'Serviceperson Tag', 'direktt-service-status' ); ?></label></th>
-					<td>
-						<select name="direktt_service_status_tags" id="direktt_service_status_tags">
-							<option value="0"><?php echo esc_html__( 'Select Tag', 'direktt-service-status' ); ?></option>
-							<?php foreach ( $all_tags as $tag ) : ?>
-								<option value="<?php echo esc_attr( $tag['value'] ); ?>" <?php selected( $tags, $tag['value'] ); ?>>
-									<?php echo esc_html( $tag['name'] ); ?>
-								</option>
-							<?php endforeach; ?>
-						</select>
-						<p class="description"><?php echo esc_html__( 'Users with this tag will be able to open/manage service cases.', 'direktt-service-status' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="direktt_service_status_new_case_template"><?php echo esc_html__( 'New Case Message Template', 'direktt-service-status' ); ?></label></th>
-					<td>
-						<select name="direktt_service_status_new_case_template" id="direktt_service_status_new_case_template">
-							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
-							<?php foreach ( $template_posts as $post ) : ?>
-								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $new_case_template, $post->ID ); ?>>
-									<?php echo esc_html( $post->post_title ); ?>
-								</option>
-							<?php endforeach; ?>
-						</select>
-						<p class="description"><?php echo esc_html__( 'You can use following dynamic placeholders in this template:', 'direktt-loyalty-program' ); ?></p>
-						<p class="description"><code><?php echo esc_html( '#case-no#' ); ?></code> <?php echo esc_html__( ' - service case title', 'direktt-service-status' ); ?></p>
-						<p class="description"><code><?php echo esc_html( '#date-time#' ); ?></code> <?php echo esc_html__( ' - date and time when case was opened.', 'direktt-service-status' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="direktt_service_status_case_change_template"><?php echo esc_html__( 'Case Status Change Message Template', 'direktt-service-status' ); ?></label></th>
-					<td>
-						<select name="direktt_service_status_case_change_template" id="direktt_service_status_case_change_template">
-							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
-							<?php foreach ( $template_posts as $post ) : ?>
-								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $case_change_template, $post->ID ); ?>>
-									<?php echo esc_html( $post->post_title ); ?>
-								</option>
-							<?php endforeach; ?>
-						</select>
-						<p class="description"><?php echo esc_html__( 'You can use following dynamic placeholders in this template:', 'direktt-loyalty-program' ); ?></p>
-						<p class="description"><code><?php echo esc_html( '#case-no#' ); ?></code> <?php echo esc_html__( ' - service case title', 'direktt-service-status' ); ?></p>
-						<p class="description"><code><?php echo esc_html( '#old-status#' ); ?></code> <?php echo esc_html__( ' - old service case status', 'direktt-service-status' ); ?></p>
-						<p class="description"><code><?php echo esc_html( '#new-status#' ); ?></code> <?php echo esc_html__( ' - new service case status', 'direktt-service-status' ); ?></p>
-						<p class="description"><code><?php echo esc_html( '#date-time#' ); ?></code> <?php echo esc_html__( ' - date and time when case was changed/updated.', 'direktt-service-status' ); ?></p>
-					</td>
-				</tr>
+                    <th scope="row"><label for="direktt_service_status_categories"><?php echo esc_html__( 'Users to Open/Manage Service Cases', 'direktt-service-status' ); ?></label></th>
+                    <td>
+                       <fieldset class="direktt-category-tag-fieldset">
+                            <legend class="screen-reader-text"><span><?php echo esc_html__( 'Users to Open/Manage Service Cases', 'direktt-service-status' ); ?></span></legend>
+                            <label for="direktt_service_status_categories"><?php echo esc_html__( 'Category', 'direktt-service-status' ); ?></label>
+                            <select name="direktt_service_status_categories" id="direktt_service_status_categories">
+								<option value="0"><?php echo esc_html__( 'Select Category', 'direktt-service-status' ); ?></option>
+								<?php foreach ( $all_categories as $category ) : ?>
+									<option value="<?php echo esc_attr( $category['value'] ); ?>" <?php selected( $categories, $category['value'] ); ?>>
+										<?php echo esc_html( $category['name'] ); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+                            <br>
+                            <label for="direktt_service_status_tags"><?php echo esc_html__( 'Tag', 'direktt-service-status' ); ?></label>
+							<select name="direktt_service_status_tags" id="direktt_service_status_tags">
+								<option value="0"><?php echo esc_html__( 'Select Tag', 'direktt-service-status' ); ?></option>
+								<?php foreach ( $all_tags as $tag ) : ?>
+									<option value="<?php echo esc_attr( $tag['value'] ); ?>" <?php selected( $tags, $tag['value'] ); ?>>
+										<?php echo esc_html( $tag['name'] ); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+                        </fieldset>
+                        <p class="description"><?php echo esc_html__( 'Users with this category/tag will be able to open/manage service cases.', 'direktt-service-status' ); ?></p>
+                    </td>
+                </tr>
 				<tr>
 					<th scope="row"><label for="direktt_service_status_opening_status"><?php echo esc_html__( 'Opening Status', 'direktt-service-status' ); ?></label></th>
 					<td>
@@ -662,6 +673,117 @@ function render_service_status_settings() {
 							<?php endforeach; ?>
 						</select>
 						<p class="description"><?php echo esc_html__( 'This status will be used to mark cases as closed.', 'direktt-service-status' ); ?></p>
+					</td>
+				</tr>
+			</table>
+			<h2 class="title"><?php echo esc_html__( 'Messages', 'direktt-service-status' ); ?></h2>
+			<h3><?php echo esc_html__( 'New Case Created', 'direktt-service-status' ); ?></h3>
+			<h3><?php echo esc_html__( 'Send Message to Subscriber', 'direktt-service-status' ); ?></h3>
+			<table class="form-table direktt-service-status-table">
+				<tr>
+                    <th scope="row"><label for="direktt_service_status_new_case_user"><?php echo esc_html__( 'Enable', 'direktt-service-status' ); ?></label></th>
+                    <td>
+                        <input type="checkbox" name="direktt_service_status_new_case_user" id="direktt_service_status_new_case_user" value="yes" <?php checked( $new_case_user ); ?> />
+                        <label for="direktt_service_status_new_case_user"><span class="description"><?php echo esc_html__( 'When enabled, a notification will be sent to the subscriber when a new case is created.', 'direktt-service-status' ); ?></span></label>
+                    </td>
+                </tr>
+				<tr id="direktt-service-status-settings-mt-user-new-case-row">
+					<th scope="row"><label for="direktt_service_status_new_case_template"><?php echo esc_html__( 'Message Template', 'direktt-service-status' ); ?></label></th>
+					<td>
+						<select name="direktt_service_status_new_case_template" id="direktt_service_status_new_case_template">
+							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
+							<?php foreach ( $template_posts as $post ) : ?>
+								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $new_case_template, $post->ID ); ?>>
+									<?php echo esc_html( $post->post_title ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+						<p class="description"><?php echo esc_html__( 'You can use following dynamic placeholders in this template:', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#case-no#' ); ?></code> <?php echo esc_html__( ' - service case title', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#date-time#' ); ?></code> <?php echo esc_html__( ' - date and time when case was opened.', 'direktt-service-status' ); ?></p>
+					</td>
+				</tr>
+			</table>
+			<h3><?php echo esc_html__( 'Send Message to Admin', 'direktt-service-status' ); ?></h3>
+			<table class="form-table direktt-service-status-table">
+				<tr>
+                    <th scope="row"><label for="direktt_service_status_new_case_admin"><?php echo esc_html__( 'Enable', 'direktt-service-status' ); ?></label></th>
+                    <td>
+                        <input type="checkbox" name="direktt_service_status_new_case_admin" id="direktt_service_status_new_case_admin" value="yes" <?php checked( $new_case_admin ); ?> />
+                        <label for="direktt_service_status_new_case_admin"><span class="description"><?php echo esc_html__( 'When enabled, a notification will be sent to the admin when a new case is created.', 'direktt-service-status' ); ?></span></label>
+                    </td>
+                </tr>
+				<tr id="direktt-service-status-settings-mt-admin-new-case-row">
+					<th scope="row"><label for="direktt_service_status_new_case_admin_template"><?php echo esc_html__( 'Message Template', 'direktt-service-status' ); ?></label></th>
+					<td>
+						<select name="direktt_service_status_new_case_admin_template" id="direktt_service_status_new_case_admin_template">
+							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
+							<?php foreach ( $template_posts as $post ) : ?>
+								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $new_case_admin_template, $post->ID ); ?>>
+									<?php echo esc_html( $post->post_title ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+						<p class="description"><?php echo esc_html__( 'You can use following dynamic placeholders in this template:', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#case-no#' ); ?></code> <?php echo esc_html__( ' - service case title', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#date-time#' ); ?></code> <?php echo esc_html__( ' - date and time when case was opened.', 'direktt-service-status' ); ?></p>
+					</td>
+				</tr>
+			</table>
+			<h3><?php echo esc_html__( 'Case Status Change', 'direktt-service-status' ); ?></h3>
+			<h3><?php echo esc_html__( 'Send Message to Subscriber', 'direktt-service-status' ); ?></h3>
+			<table class="form-table direktt-service-status-table">
+				<tr>
+                    <th scope="row"><label for="direktt_service_status_case_change_user"><?php echo esc_html__( 'Enable', 'direktt-service-status' ); ?></label></th>
+                    <td>
+                        <input type="checkbox" name="direktt_service_status_case_change_user" id="direktt_service_status_case_change_user" value="yes" <?php checked( $case_change_user ); ?> />
+                        <label for="direktt_service_status_case_change_user"><span class="description"><?php echo esc_html__( 'When enabled, a notification will be sent to the user when case status is changed.', 'direktt-service-status' ); ?></span></label>
+                    </td>
+                </tr>
+				<tr id="direktt-service-status-settings-mt-user-case-change-row">
+					<th scope="row"><label for="direktt_service_status_case_change_template"><?php echo esc_html__( 'Message Template', 'direktt-service-status' ); ?></label></th>
+					<td>
+						<select name="direktt_service_status_case_change_template" id="direktt_service_status_case_change_template">
+							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
+							<?php foreach ( $template_posts as $post ) : ?>
+								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $case_change_template, $post->ID ); ?>>
+									<?php echo esc_html( $post->post_title ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+						<p class="description"><?php echo esc_html__( 'You can use following dynamic placeholders in this template:', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#case-no#' ); ?></code> <?php echo esc_html__( ' - service case title', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#old-status#' ); ?></code> <?php echo esc_html__( ' - old service case status', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#new-status#' ); ?></code> <?php echo esc_html__( ' - new service case status', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#date-time#' ); ?></code> <?php echo esc_html__( ' - date and time when case was changed/updated.', 'direktt-service-status' ); ?></p>
+					</td>
+				</tr>
+			</table>
+			<h3><?php echo esc_html__( 'Send Message to Admin', 'direktt-service-status' ); ?></h3>
+			<table class="form-table direktt-service-status-table">
+				<tr>
+                    <th scope="row"><label for="direktt_service_status_case_change_admin"><?php echo esc_html__( 'Enable', 'direktt-service-status' ); ?></label></th>
+                    <td>
+                        <input type="checkbox" name="direktt_service_status_case_change_admin" id="direktt_service_status_case_change_admin" value="yes" <?php checked( $case_change_admin ); ?> />
+                        <label for="direktt_service_status_case_change_admin"><span class="description"><?php echo esc_html__( 'When enabled, a notification will be sent to the admin when case status is changed.', 'direktt-service-status' ); ?></span></label>
+                    </td>
+                </tr>
+				<tr id="direktt-service-status-settings-mt-admin-case-change-row">
+					<th scope="row"><label for="direktt_service_status_case_change_admin_template"><?php echo esc_html__( 'Message Template', 'direktt-service-status' ); ?></label></th>
+					<td>
+						<select name="direktt_service_status_case_change_admin_template" id="direktt_service_status_case_change_admin_template">
+							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
+							<?php foreach ( $template_posts as $post ) : ?>
+								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $case_change_admin_template, $post->ID ); ?>>
+									<?php echo esc_html( $post->post_title ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+						<p class="description"><?php echo esc_html__( 'You can use following dynamic placeholders in this template:', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#case-no#' ); ?></code> <?php echo esc_html__( ' - service case title', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#old-status#' ); ?></code> <?php echo esc_html__( ' - old service case status', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#new-status#' ); ?></code> <?php echo esc_html__( ' - new service case status', 'direktt-service-status' ); ?></p>
+						<p class="description"><code><?php echo esc_html( '#date-time#' ); ?></code> <?php echo esc_html__( ' - date and time when case was changed/updated.', 'direktt-service-status' ); ?></p>
 					</td>
 				</tr>
 			</table>
@@ -746,15 +868,30 @@ function render_service_status_profile_tool() {
 
 				$case_opened_flag = get_post_meta( $case_id, '_dss_case_opened_flag', true );
 				if ( empty( $case_opened_flag ) ) {
+					$new_case_user     = get_option( 'direktt_service_status_new_case_user', 'no' ) === 'yes';
 					$new_case_template = intval( get_option( 'direktt_service_status_new_case_template', 0 ) );
-					Direktt_Message::send_message_template(
-						array( $subscription_id ),
-						$new_case_template,
-						array(
-							'case-no'   => $post->post_title,
-							'date-time' => current_time( 'mysql' ),
-						)
-					);
+					if ( $new_case_user && $new_case_template !== 0 ) {
+						Direktt_Message::send_message_template(
+							array( $subscription_id ),
+							$new_case_template,
+							array(
+								'case-no'   => $post->post_title,
+								'date-time' => current_time( 'mysql' ),
+							)
+						);
+					}
+
+					$new_case_admin	         = get_option( 'direktt_service_status_new_case_admin', 'no' ) === 'yes';
+					$new_case_admin_template = intval( get_option( 'direktt_service_status_new_case_admin_template', 0 ) );
+					if ( $new_case_admin && $new_case_admin_template !== 0 ) {
+						Direktt_Message::send_message_template_to_admin(
+							$new_case_admin_template,
+							array(
+								'case-no'   => $post->post_title,
+								'date-time' => current_time( 'mysql' ),
+							)
+						);
+					}
 					update_post_meta( $case_id, '_dss_case_opened_flag', '1' );
 				}
 
@@ -1570,15 +1707,30 @@ function direktt_add_service_case_shortcode() {
 
 					$case_opened_flag = get_post_meta( $case_id, '_dss_case_opened_flag', true );
 					if ( empty( $case_opened_flag ) ) {
+						$new_case_user     = get_option( 'direktt_service_status_new_case_user', 'no' ) === 'yes';
 						$new_case_template = intval( get_option( 'direktt_service_status_new_case_template', 0 ) );
-						Direktt_Message::send_message_template(
-							array( $user_subscription_id ),
-							$new_case_template,
-							array(
-								'case-no'   => $post->post_title,
-								'date-time' => current_time( 'mysql' ),
-							)
-						);
+						if ( $new_case_user && $new_case_template !== 0 ) {
+							Direktt_Message::send_message_template(
+								array( $subscription_id ),
+								$new_case_template,
+								array(
+									'case-no'   => $post->post_title,
+									'date-time' => current_time( 'mysql' ),
+								)
+							);
+						}
+
+						$new_case_admin	         = get_option( 'direktt_service_status_new_case_admin', 'no' ) === 'yes';
+						$new_case_admin_template = intval( get_option( 'direktt_service_status_new_case_admin_template', 0 ) );
+						if ( $new_case_admin && $new_case_admin_template !== 0 ) {
+							Direktt_Message::send_message_template_to_admin(
+								$new_case_admin_template,
+								array(
+									'case-no'   => $post->post_title,
+									'date-time' => current_time( 'mysql' ),
+								)
+							);
+						}
 						update_post_meta( $case_id, '_dss_case_opened_flag', '1' );
 					}
 
