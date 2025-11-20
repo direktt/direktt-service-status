@@ -648,40 +648,38 @@ function render_service_status_settings() {
                     </td>
                 </tr>
 				<tr>
-					<th scope="row"><label for="direktt_service_status_opening_status"><?php echo esc_html__( 'Opening Status', 'direktt-service-status' ); ?></label></th>
-					<td>
-						<select name="direktt_service_status_opening_status" id="direktt_service_status_opening_status">
-							<option value="0"><?php echo esc_html__( 'Select Status', 'direktt-service-status' ); ?></option>
-							<?php foreach ( $status_options as $option ) : ?>
-								<option value="<?php echo esc_attr( $option['value'] ); ?>" <?php selected( $opening_status, $option['value'] ); ?>>
-									<?php echo esc_html( $option['name'] ); ?>
-								</option>
-							<?php endforeach; ?>
-						</select>
-						<p class="description"><?php echo esc_html__( 'This status will be assigned to new cases when they are opened.', 'direktt-service-status' ); ?></p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="direktt_service_status_closing_status"><?php echo esc_html__( 'Closing Status', 'direktt-service-status' ); ?></label></th>
-					<td>
-						<select name="direktt_service_status_closing_status" id="direktt_service_status_closing_status">
-							<option value="0"><?php echo esc_html__( 'Select Status', 'direktt-service-status' ); ?></option>
-							<?php foreach ( $status_options as $option ) : ?>
-								<option value="<?php echo esc_attr( $option['value'] ); ?>" <?php selected( $closing_status, $option['value'] ); ?>>
-									<?php echo esc_html( $option['name'] ); ?>
-								</option>
-							<?php endforeach; ?>
-						</select>
-						<p class="description"><?php echo esc_html__( 'This status will be used to mark cases as closed.', 'direktt-service-status' ); ?></p>
-					</td>
-				</tr>
+                    <th scope="row"><label for="direktt_service_status_opening_status"><?php echo esc_html__( 'Default Case Statuses', 'direktt-service-status' ); ?></label></th>
+                    <td>
+                       <fieldset class="direktt-category-tag-fieldset">
+                            <legend class="screen-reader-text"><span><?php echo esc_html__( 'Default Case Statuses', 'direktt-service-status' ); ?></span></legend>
+                            <label for="direktt_service_status_opening_status"><?php echo esc_html__( 'Opening', 'direktt-service-status' ); ?></label>
+                            <select name="direktt_service_status_opening_status" id="direktt_service_status_opening_status">
+								<option value="0"><?php echo esc_html__( 'Select Case Status', 'direktt-service-status' ); ?></option>
+								<?php foreach ( $status_options as $option ) : ?>
+									<option value="<?php echo esc_attr( $option['value'] ); ?>" <?php selected( $opening_status, $option['value'] ); ?>>
+										<?php echo esc_html( $option['name'] ); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+                            <br>
+                            <label for="direktt_service_status_closing_status"><?php echo esc_html__( 'Closing', 'direktt-service-status' ); ?></label>
+							<select name="direktt_service_status_closing_status" id="direktt_service_status_closing_status">
+								<option value="0"><?php echo esc_html__( 'Select Case Status', 'direktt-service-status' ); ?></option>
+								<?php foreach ( $status_options as $option ) : ?>
+									<option value="<?php echo esc_attr( $option['value'] ); ?>" <?php selected( $closing_status, $option['value'] ); ?>>
+										<?php echo esc_html( $option['name'] ); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+                        </fieldset>
+						<p class="description"><?php echo esc_html__( 'These statuses will be assigned to cases when they are opened or used to mark them as closed.', 'direktt-service-status' ); ?></p>
+                    </td>
+                </tr>
 			</table>
-			<h2 class="title"><?php echo esc_html__( 'Messages', 'direktt-service-status' ); ?></h2>
-			<h3><?php echo esc_html__( 'New Case Created', 'direktt-service-status' ); ?></h3>
-			<h3><?php echo esc_html__( 'Send Message to Subscriber', 'direktt-service-status' ); ?></h3>
+			<h2 class="title"><?php echo esc_html__( 'New Case Messages', 'direktt-service-status' ); ?></h2>
 			<table class="form-table direktt-service-status-table">
 				<tr>
-                    <th scope="row"><label for="direktt_service_status_new_case_user"><?php echo esc_html__( 'Enable', 'direktt-service-status' ); ?></label></th>
+                    <th scope="row"><label for="direktt_service_status_new_case_user"><?php echo esc_html__( 'Send to Subscriber', 'direktt-service-status' ); ?></label></th>
                     <td>
                         <input type="checkbox" name="direktt_service_status_new_case_user" id="direktt_service_status_new_case_user" value="yes" <?php checked( $new_case_user ); ?> />
                         <label for="direktt_service_status_new_case_user"><span class="description"><?php echo esc_html__( 'When enabled, a notification will be sent to the subscriber when a new case is created.', 'direktt-service-status' ); ?></span></label>
