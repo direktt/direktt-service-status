@@ -38,7 +38,7 @@ https://github.com/direktt/direktt-service-status/wiki
 - Configure:
     - Direktt user category/tag allowed to manage service cases.
     - Notifications for users on new case creation and case status change.
-    - Opening (first in chain ) and closing status (last in chain).
+    - Opening (first in chain) and closing service status (last in chain).
 
 - Find **Direktt > Service Case Status**
 - Configure:
