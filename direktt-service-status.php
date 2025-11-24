@@ -686,7 +686,7 @@ function render_service_status_settings() {
                     </td>
                 </tr>
 				<tr id="direktt-service-status-settings-mt-user-new-case-row">
-					<th scope="row"><label for="direktt_service_status_new_case_template"><?php echo esc_html__( 'Message Template', 'direktt-service-status' ); ?></label></th>
+					<th scope="row"></th>
 					<td>
 						<select name="direktt_service_status_new_case_template" id="direktt_service_status_new_case_template">
 							<option value="0"><?php echo esc_html__( 'Select Message Template', 'direktt-service-status' ); ?></option>
@@ -709,7 +709,7 @@ function render_service_status_settings() {
                     </td>
                 </tr>
 				<tr id="direktt-service-status-settings-mt-admin-new-case-row">
-					<th scope="row"><label for="direktt_service_status_new_case_admin_template"><?php echo esc_html__( 'Message Template', 'direktt-service-status' ); ?></label></th>
+					<th scope="row"></th>
 					<td>
 						<select name="direktt_service_status_new_case_admin_template" id="direktt_service_status_new_case_admin_template">
 							<option value="0"><?php echo esc_html__( 'Select Message Template', 'direktt-service-status' ); ?></option>
@@ -735,7 +735,7 @@ function render_service_status_settings() {
                     </td>
                 </tr>
 				<tr id="direktt-service-status-settings-mt-user-case-change-row">
-					<th scope="row"><label for="direktt_service_status_case_change_template"><?php echo esc_html__( 'Message Template', 'direktt-service-status' ); ?></label></th>
+					<th scope="row"></th>
 					<td>
 						<select name="direktt_service_status_case_change_template" id="direktt_service_status_case_change_template">
 							<option value="0"><?php echo esc_html__( 'Select Message Template', 'direktt-service-status' ); ?></option>
@@ -760,7 +760,7 @@ function render_service_status_settings() {
                     </td>
                 </tr>
 				<tr id="direktt-service-status-settings-mt-admin-case-change-row">
-					<th scope="row"><label for="direktt_service_status_case_change_admin_template"><?php echo esc_html__( 'Message Template', 'direktt-service-status' ); ?></label></th>
+					<th scope="row"></th>
 					<td>
 						<select name="direktt_service_status_case_change_admin_template" id="direktt_service_status_case_change_admin_template">
 							<option value="0"><?php echo esc_html__( 'Select Message Template', 'direktt-service-status' ); ?></option>
