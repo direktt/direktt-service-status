@@ -689,7 +689,7 @@ function render_service_status_settings() {
 					<th scope="row"><label for="direktt_service_status_new_case_template"><?php echo esc_html__( 'Message Template', 'direktt-service-status' ); ?></label></th>
 					<td>
 						<select name="direktt_service_status_new_case_template" id="direktt_service_status_new_case_template">
-							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
+							<option value="0"><?php echo esc_html__( 'Select Message Template', 'direktt-service-status' ); ?></option>
 							<?php foreach ( $template_posts as $post ) : ?>
 								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $new_case_template, $post->ID ); ?>>
 									<?php echo esc_html( $post->post_title ); ?>
@@ -701,11 +701,8 @@ function render_service_status_settings() {
 						<p class="description"><code><?php echo esc_html( '#date-time#' ); ?></code> <?php echo esc_html__( ' - date and time when case was opened.', 'direktt-service-status' ); ?></p>
 					</td>
 				</tr>
-			</table>
-			<h3><?php echo esc_html__( 'Send Message to Admin', 'direktt-service-status' ); ?></h3>
-			<table class="form-table direktt-service-status-table">
 				<tr>
-                    <th scope="row"><label for="direktt_service_status_new_case_admin"><?php echo esc_html__( 'Enable', 'direktt-service-status' ); ?></label></th>
+                    <th scope="row"><label for="direktt_service_status_new_case_admin"><?php echo esc_html__( 'Send to Admin', 'direktt-service-status' ); ?></label></th>
                     <td>
                         <input type="checkbox" name="direktt_service_status_new_case_admin" id="direktt_service_status_new_case_admin" value="yes" <?php checked( $new_case_admin ); ?> />
                         <label for="direktt_service_status_new_case_admin"><span class="description"><?php echo esc_html__( 'When enabled, a notification will be sent to the admin when a new case is created.', 'direktt-service-status' ); ?></span></label>
@@ -715,7 +712,7 @@ function render_service_status_settings() {
 					<th scope="row"><label for="direktt_service_status_new_case_admin_template"><?php echo esc_html__( 'Message Template', 'direktt-service-status' ); ?></label></th>
 					<td>
 						<select name="direktt_service_status_new_case_admin_template" id="direktt_service_status_new_case_admin_template">
-							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
+							<option value="0"><?php echo esc_html__( 'Select Message Template', 'direktt-service-status' ); ?></option>
 							<?php foreach ( $template_posts as $post ) : ?>
 								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $new_case_admin_template, $post->ID ); ?>>
 									<?php echo esc_html( $post->post_title ); ?>
@@ -728,11 +725,10 @@ function render_service_status_settings() {
 					</td>
 				</tr>
 			</table>
-			<h3><?php echo esc_html__( 'Case Status Change', 'direktt-service-status' ); ?></h3>
-			<h3><?php echo esc_html__( 'Send Message to Subscriber', 'direktt-service-status' ); ?></h3>
+			<h2 class="title"><?php echo esc_html__( 'Case Status Change Message', 'direktt-service-status' ); ?></h2>
 			<table class="form-table direktt-service-status-table">
 				<tr>
-                    <th scope="row"><label for="direktt_service_status_case_change_user"><?php echo esc_html__( 'Enable', 'direktt-service-status' ); ?></label></th>
+                    <th scope="row"><label for="direktt_service_status_case_change_user"><?php echo esc_html__( 'Send to Subscriber', 'direktt-service-status' ); ?></label></th>
                     <td>
                         <input type="checkbox" name="direktt_service_status_case_change_user" id="direktt_service_status_case_change_user" value="yes" <?php checked( $case_change_user ); ?> />
                         <label for="direktt_service_status_case_change_user"><span class="description"><?php echo esc_html__( 'When enabled, a notification will be sent to the user when case status is changed.', 'direktt-service-status' ); ?></span></label>
@@ -742,7 +738,7 @@ function render_service_status_settings() {
 					<th scope="row"><label for="direktt_service_status_case_change_template"><?php echo esc_html__( 'Message Template', 'direktt-service-status' ); ?></label></th>
 					<td>
 						<select name="direktt_service_status_case_change_template" id="direktt_service_status_case_change_template">
-							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
+							<option value="0"><?php echo esc_html__( 'Select Message Template', 'direktt-service-status' ); ?></option>
 							<?php foreach ( $template_posts as $post ) : ?>
 								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $case_change_template, $post->ID ); ?>>
 									<?php echo esc_html( $post->post_title ); ?>
@@ -756,11 +752,8 @@ function render_service_status_settings() {
 						<p class="description"><code><?php echo esc_html( '#date-time#' ); ?></code> <?php echo esc_html__( ' - date and time when case was changed/updated.', 'direktt-service-status' ); ?></p>
 					</td>
 				</tr>
-			</table>
-			<h3><?php echo esc_html__( 'Send Message to Admin', 'direktt-service-status' ); ?></h3>
-			<table class="form-table direktt-service-status-table">
 				<tr>
-                    <th scope="row"><label for="direktt_service_status_case_change_admin"><?php echo esc_html__( 'Enable', 'direktt-service-status' ); ?></label></th>
+                    <th scope="row"><label for="direktt_service_status_case_change_admin"><?php echo esc_html__( 'Send to Admin', 'direktt-service-status' ); ?></label></th>
                     <td>
                         <input type="checkbox" name="direktt_service_status_case_change_admin" id="direktt_service_status_case_change_admin" value="yes" <?php checked( $case_change_admin ); ?> />
                         <label for="direktt_service_status_case_change_admin"><span class="description"><?php echo esc_html__( 'When enabled, a notification will be sent to the admin when case status is changed.', 'direktt-service-status' ); ?></span></label>
@@ -770,7 +763,7 @@ function render_service_status_settings() {
 					<th scope="row"><label for="direktt_service_status_case_change_admin_template"><?php echo esc_html__( 'Message Template', 'direktt-service-status' ); ?></label></th>
 					<td>
 						<select name="direktt_service_status_case_change_admin_template" id="direktt_service_status_case_change_admin_template">
-							<option value="0"><?php echo esc_html__( 'Select Template', 'direktt-service-status' ); ?></option>
+							<option value="0"><?php echo esc_html__( 'Select Message Template', 'direktt-service-status' ); ?></option>
 							<?php foreach ( $template_posts as $post ) : ?>
 								<option value="<?php echo esc_attr( $post->ID ); ?>" <?php selected( $case_change_admin_template, $post->ID ); ?>>
 									<?php echo esc_html( $post->post_title ); ?>
