@@ -1494,6 +1494,7 @@ function direktt_service_status_get_status_list() {
 }
 
 add_action( 'wp_ajax_direktt_search_service_cases', 'handle_direktt_search_service_cases' );
+add_action( 'wp_ajax_nopriv_direktt_search_service_cases', 'handle_direktt_search_service_cases' );
 
 function handle_direktt_search_service_cases() {
 	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'direktt_service_status_action' ) ) {
@@ -1577,6 +1578,7 @@ function handle_direktt_search_service_cases() {
 }
 
 add_action( 'wp_ajax_direktt_search_service_cases_id', 'handle_direktt_search_service_cases_id' );
+add_action( 'wp_ajax_nopriv_direktt_search_service_cases_id', 'handle_direktt_search_service_cases_id' );
 
 function handle_direktt_search_service_cases_id() {
 	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'direktt_service_status_action' ) ) {
