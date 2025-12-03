@@ -335,7 +335,7 @@ function direktt_save_service_case_post( $post_id ) {
 
 		update_post_meta( $post_id, '_dss_case_opened_flag', '1' );
 
-		$direktt_user = Direktt_User::direktt_get_current_user();;
+		$direktt_user = Direktt_User::direktt_get_current_user();
 		if ( $direktt_user ) {
 			$user_id = $direktt_user['direktt_user_id'];
 		} else {
@@ -485,7 +485,7 @@ function direktt_log_case_status_change( $object_id, $terms, $tt_ids, $taxonomy,
 	$log = get_post_meta( $object_id, 'direktt_service_status_change_log', true ) ?: array();
 
 	if ( $old_term !== null ) {
-		$direktt_user = Direktt_User::direktt_get_current_user();;
+		$direktt_user = Direktt_User::direktt_get_current_user();
 		if ( $direktt_user ) {
 			$user_id = $direktt_user['direktt_user_id'];
 		} else {
@@ -886,7 +886,7 @@ function render_service_status_profile_tool() {
 					update_post_meta( $case_id, '_dss_case_opened_flag', '1' );
 				}
 
-				$direktt_user = Direktt_User::direktt_get_current_user();;
+				$direktt_user = Direktt_User::direktt_get_current_user();
 				if ( $direktt_user ) {
 					$user_id = $direktt_user['direktt_user_id'];
 				} else {
@@ -1648,7 +1648,7 @@ function handle_direktt_search_service_cases_id() {
 add_shortcode( 'direktt_service_case', 'direktt_add_service_case_shortcode' );
 
 function direktt_add_service_case_shortcode() {
-	$direktt_user = Direktt_User::direktt_get_current_user();;
+	$direktt_user = Direktt_User::direktt_get_current_user();
 	if ( ! $direktt_user ) {
 		return;
 	}
