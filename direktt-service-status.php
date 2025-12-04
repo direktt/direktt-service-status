@@ -1034,6 +1034,7 @@ function render_service_status_profile_tool() {
 				}
 
 				if (action === 'add') {
+					$( '.direktt-loader-overlay' ).fadeIn();
 					$('<input>').attr({
 						type: 'hidden',
 						name: 'add_service_case',
@@ -1058,6 +1059,7 @@ function render_service_status_profile_tool() {
 						$('form').submit();
 					}, 500);
 				} else if (action === 'edit') {
+					$( '.direktt-loader-overlay' ).fadeIn();
 					$('<input>').attr({
 						type: 'hidden',
 						name: 'edit_service_case',
@@ -1471,6 +1473,7 @@ function render_service_status_profile_tool() {
 		<?php
 		$allowed_html = wp_kses_allowed_html( 'post' );
         echo wp_kses( Direktt_Public::direktt_render_alert_popup( 'direktt-service-status-alert', '' ), $allowed_html );
+		echo wp_kses( Direktt_Public::direktt_render_loader( __( 'Don\'t refresh the page', 'direktt-cross-sell' ) ), $allowed_html );
         ?>
 	</div>
 	<?php
@@ -1864,6 +1867,7 @@ function direktt_add_service_case_shortcode() {
 					}
 
 					if (action === 'add') {
+						$( '.direktt-loader-overlay' ).fadeIn();
 						$('<input>').attr({
 							type: 'hidden',
 							name: 'add_service_case',
@@ -1893,6 +1897,7 @@ function direktt_add_service_case_shortcode() {
 							$('form').submit();
 						}, 500);
 					} else if (action === 'edit') {
+						$( '.direktt-loader-overlay' ).fadeIn();
 						$('<input>').attr({
 							type: 'hidden',
 							name: 'edit_service_case',
@@ -2336,6 +2341,7 @@ function direktt_add_service_case_shortcode() {
             <?php
 			$allowed_html = wp_kses_allowed_html( 'post' );
             echo wp_kses( Direktt_Public::direktt_render_alert_popup( 'direktt-service-status-alert', '' ), $allowed_html );
+			echo wp_kses( Direktt_Public::direktt_render_loader( __( 'Don\'t refresh the page', 'direktt-cross-sell' ) ), $allowed_html );
             ?>
 		</div>
 		<?php
