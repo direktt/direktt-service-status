@@ -73,9 +73,9 @@ function direktt_service_status_activation_check() {
     }
 }
 
-add_action( 'init', 'direktt_register_service_case_cpt' );
+add_action( 'init', 'direktt_service_status_register_service_case_cpt' );
 
-function direktt_register_service_case_cpt() {
+function direktt_service_status_register_service_case_cpt() {
 	$labels = array(
 		'name'               => esc_html__( 'Direktt Service Cases', 'direktt-service-status' ),
 		'singular_name'      => esc_html__( 'Direktt Service Case', 'direktt-service-status' ),
@@ -120,9 +120,9 @@ function direktt_service_status_enqueue_admin_assets( $hook ) {
 	}
 }
 
-add_action( 'wp_enqueue_scripts', 'direktt_dss_enqueue_fe_assets' );
+add_action( 'wp_enqueue_scripts', 'direktt_service_status_enqueue_fe_assets' );
 
-function direktt_dss_enqueue_fe_assets( $hook ) {
+function direktt_service_status_enqueue_fe_assets( $hook ) {
 	global $enqueue_direktt_case_script;
 	if ( $enqueue_direktt_case_script ) {
 		wp_register_style( 'jquery-ui-css', plugins_url( 'assets/css/jquery-ui.css', __FILE__ ), array(), '1.12.1' );
@@ -131,9 +131,9 @@ function direktt_dss_enqueue_fe_assets( $hook ) {
 	}
 }
 
-add_action( 'edit_form_after_title', 'direktt_dss_add_popup' );
+add_action( 'edit_form_after_title', 'direktt_service_status_add_popup' );
 
-function direktt_dss_add_popup( $post ) {
+function direktt_service_status_add_popup( $post ) {
 	if ( 'direktt_service_case' === $post->post_type ) {
 		?>
 		<div class="dsc-error-popup">
@@ -146,13 +146,13 @@ function direktt_dss_add_popup( $post ) {
 	}
 }
 
-add_action( 'add_meta_boxes', 'direktt_add_dss_meta_boxes' );
+add_action( 'add_meta_boxes', 'direktt_service_status_add_meta_boxes' );
 
-function direktt_add_dss_meta_boxes() {
+function direktt_service_status_add_meta_boxes() {
 	add_meta_box(
 		'dss_direktt_subscription_id',
 		esc_html__( 'Subscription ID', 'direktt-service-status' ),
-		'dss_direktt_subscription_id_meta_box_callback',
+		'direktt_service_status_subscription_id_meta_box_callback',
 		'direktt_service_case',
 		'side',
 		'default'
@@ -161,14 +161,14 @@ function direktt_add_dss_meta_boxes() {
 	add_meta_box(
 		'dss_direktt_service_status_change_log',
 		esc_html__( 'Service Status Change Log', 'direktt-service-status' ),
-		'dss_direktt_service_status_change_log_meta_box_callback',
+		'direktt_service_status_change_log_meta_box_callback',
 		'direktt_service_case',
 		'normal',
 		'default'
 	);
 }
 
-function dss_direktt_subscription_id_meta_box_callback( $post ) {
+function direktt_service_status_subscription_id_meta_box_callback( $post ) {
 	$subscription_id = get_post_meta( $post->ID, '_dss_direktt_subscription_id', true );
 
 	$all_ids = array();
@@ -191,7 +191,7 @@ function dss_direktt_subscription_id_meta_box_callback( $post ) {
 	<?php
 }
 
-function dss_direktt_service_status_change_log_meta_box_callback( $post ) {
+function direktt_service_status_change_log_meta_box_callback( $post ) {
 	$log = get_post_meta( $post->ID, 'direktt_service_status_change_log', true ) ?: array();
 	$log = array_reverse( $log );
 
@@ -265,9 +265,9 @@ function dss_direktt_service_status_change_log_meta_box_callback( $post ) {
 	}
 }
 
-add_action( 'save_post_direktt_service_case', 'direktt_save_service_case_post' );
+add_action( 'save_post_direktt_service_case', 'direktt_service_status_save_service_case_post' );
 
-function direktt_save_service_case_post( $post_id ) {
+function direktt_service_status_save_service_case_post( $post_id ) {
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 		return;
 	}
@@ -279,7 +279,7 @@ function direktt_save_service_case_post( $post_id ) {
 	}
 
 	if ( trim( $post->post_title ) === '' ) {
-		remove_action( 'save_post_direktt_service_case', 'direktt_save_service_case_post' );
+		remove_action( 'save_post_direktt_service_case', 'direktt_service_status_save_service_case_post' );
 		$default_title = 'DSC_' . $post_id;
 		wp_update_post(
 			array(
@@ -287,7 +287,7 @@ function direktt_save_service_case_post( $post_id ) {
 				'post_title' => $default_title,
 			)
 		);
-		add_action( 'save_post_direktt_service_case', 'direktt_save_service_case_post' );
+		add_action( 'save_post_direktt_service_case', 'direktt_service_status_save_service_case_post' );
 		$post = get_post( $post_id );
 	}
 
@@ -373,9 +373,9 @@ function direktt_save_service_case_post( $post_id ) {
 	}
 }
 
-add_action( 'init', 'direktt_register_case_status_taxonomy' );
+add_action( 'init', 'direktt_service_status_register_case_status_taxonomy' );
 
-function direktt_register_case_status_taxonomy() {
+function direktt_service_status_register_case_status_taxonomy() {
 	$labels = array(
 		'name'              => esc_html__( 'Service Case Status', 'direktt-service-status' ),
 		'singular_name'     => esc_html__( 'Service Case Status', 'direktt-service-status' ),
@@ -402,9 +402,9 @@ function direktt_register_case_status_taxonomy() {
 	register_taxonomy( 'case_status', 'direktt_service_case', $args );
 }
 
-add_action( 'direktt_setup_admin_menu', 'direktt_add_case_status_submenu' );
+add_action( 'direktt_setup_admin_menu', 'direktt_service_status_add_case_status_submenu' );
 
-function direktt_add_case_status_submenu() {
+function direktt_service_status_add_case_status_submenu() {
 	add_submenu_page(
 		'direktt-dashboard',
 		__( 'Service Cases', 'direktt-service-status' ),
@@ -426,22 +426,9 @@ function direktt_add_case_status_submenu() {
 	);
 }
 
-add_action( 'parent_file', 'highlight_direktt_submenu_service_status' );
+add_action( 'set_object_terms', 'direktt_service_status_log_case_status_change', 10, 6 );
 
-function highlight_direktt_submenu_service_status( $parent_file ) {
-	global $submenu_file, $current_screen, $pagenow;
-
-	if ( $pagenow == 'edit-tags.php' && $current_screen->taxonomy == 'case_status' ) {
-		$submenu_file = 'edit-tags.php?taxonomy=case_status';
-		$parent_file  = 'direktt-dashboard';
-	}
-
-	return $parent_file;
-}
-
-add_action( 'set_object_terms', 'direktt_log_case_status_change', 10, 6 );
-
-function direktt_log_case_status_change( $object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids ) {
+function direktt_service_status_log_case_status_change( $object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids ) {
 	if ( $taxonomy !== 'case_status' ) {
 		return;
 	}
@@ -538,20 +525,20 @@ function direktt_log_case_status_change( $object_id, $terms, $tt_ids, $taxonomy,
 	update_post_meta( $object_id, 'direktt_service_status_change_log', $log );
 }
 
-add_action( 'direktt_setup_settings_pages', 'setup_service_status_settings_page' );
+add_action( 'direktt_setup_settings_pages', 'direktt_service_status_setup_settings_page' );
 
-function setup_service_status_settings_page() {
+function direktt_service_status_setup_settings_page() {
 	Direktt::add_settings_page(
 		array(
 			'id'       => 'service-status',
 			'label'    => esc_html__( 'Service Status Settings', 'direktt-service-status' ),
-			'callback' => 'render_service_status_settings',
+			'callback' => 'direktt_service_status_render_settings',
 			'priority' => 2,
 		)
 	);
 }
 
-function render_service_status_settings() {
+function direktt_service_status_render_settings() {
 	$success = false;
 
 	// Handle form submission
@@ -785,9 +772,9 @@ function render_service_status_settings() {
 	<?php
 }
 
-add_action( 'direktt_setup_profile_tools', 'setup_service_status_profile_tools' );
+add_action( 'direktt_setup_profile_tools', 'direktt_service_status_setup_profile_tool' );
 
-function setup_service_status_profile_tools() {
+function direktt_service_status_setup_profile_tool() {
 	$selected_category = intval( get_option( 'direktt_service_status_categories', 0 ) );
 	$selected_tag      = intval( get_option( 'direktt_service_status_tags', 0 ) );
 
@@ -809,7 +796,7 @@ function setup_service_status_profile_tools() {
 		array(
 			'id'              => 'service-status-tool',
 			'label'           => esc_html__( 'Service Status', 'direktt-service-status' ),
-			'callback'        => 'render_service_status_profile_tool',
+			'callback'        => 'direktt_service_status_render_profile_tool',
 			'categories'      => $category_slug ? array( $category_slug ) : array(),
 			'tags'            => $tag_slug ? array( $tag_slug ) : array(),
 			'priority'        => 2,
@@ -828,7 +815,7 @@ function setup_service_status_profile_tools() {
 	);
 }
 
-function render_service_status_profile_tool() {
+function direktt_service_status_render_profile_tool() {
 	$subscription_id = isset( $_GET['subscriptionId'] ) ? sanitize_text_field( wp_unslash( $_GET['subscriptionId'] ) ) : false;
 	$profile_user    = Direktt_User::get_user_by_subscription_id( $subscription_id );
 	if ( ! $profile_user ) {
@@ -1496,10 +1483,10 @@ function direktt_service_status_get_status_list() {
 	return $status_options;
 }
 
-add_action( 'wp_ajax_direktt_search_service_cases', 'handle_direktt_search_service_cases' );
-add_action( 'wp_ajax_nopriv_direktt_search_service_cases', 'handle_direktt_search_service_cases' );
+add_action( 'wp_ajax_direktt_search_service_cases', 'direktt_service_status_handle_direktt_search_service_cases' );
+add_action( 'wp_ajax_nopriv_direktt_search_service_cases', 'direktt_service_status_handle_direktt_search_service_cases' );
 
-function handle_direktt_search_service_cases() {
+function direktt_service_status_handle_direktt_search_service_cases() {
 	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'direktt_service_status_action' ) ) {
 		wp_send_json_error( esc_html__( 'Invalid nonce.', 'direktt-service-status' ) );
 		wp_die();
@@ -1580,10 +1567,10 @@ function handle_direktt_search_service_cases() {
 	wp_die();
 }
 
-add_action( 'wp_ajax_direktt_search_service_cases_id', 'handle_direktt_search_service_cases_id' );
-add_action( 'wp_ajax_nopriv_direktt_search_service_cases_id', 'handle_direktt_search_service_cases_id' );
+add_action( 'wp_ajax_direktt_search_service_cases_id', 'direktt_service_status_handle_direktt_search_service_cases_id' );
+add_action( 'wp_ajax_nopriv_direktt_search_service_cases_id', 'direktt_service_status_handle_direktt_search_service_cases_id' );
 
-function handle_direktt_search_service_cases_id() {
+function direktt_service_status_handle_direktt_search_service_cases_id() {
 	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'direktt_service_status_action' ) ) {
 		wp_send_json_error( esc_html__( 'Invalid nonce.', 'direktt-service-status' ) );
 		wp_die();
@@ -1648,9 +1635,9 @@ function handle_direktt_search_service_cases_id() {
 	wp_die();
 }
 
-add_shortcode( 'direktt_service_case', 'direktt_add_service_case_shortcode' );
+add_shortcode( 'direktt_service_case', 'direktt_service_status_add_service_case_shortcode' );
 
-function direktt_add_service_case_shortcode() {
+function direktt_service_status_add_service_case_shortcode() {
 	$direktt_user = Direktt_User::direktt_get_current_user();
 	if ( ! $direktt_user ) {
 		return;
@@ -2476,17 +2463,15 @@ function direktt_add_service_case_shortcode() {
 add_action( 'parent_file', 'direktt_service_status_highlight_submenu' );
 
 function direktt_service_status_highlight_submenu( $parent_file ) {
-	global $submenu_file, $current_screen, $pagenow;
+    global $submenu_file, $current_screen, $pagenow;
 
-	if ( $pagenow === 'post.php' || $pagenow === 'post-new.php' ) {
-		if ( $current_screen->post_type === 'direktt_service_case' ) {
-			$submenu_file = 'edit.php?post_type=direktt_service_case';
-			$parent_file  = 'direktt-dashboard';
-		}
-	} elseif ( $pagenow === 'term.php' && $current_screen->taxonomy === 'case_status' ) {
-		$submenu_file = 'edit-tags.php?taxonomy=case_status';
-		$parent_file  = 'direktt-dashboard';
-	}
+    if ( ( $pagenow === 'post.php' || $pagenow === 'post-new.php' ) && $current_screen->post_type === 'direktt_service_case' ) {
+        $submenu_file = 'edit.php?post_type=direktt_service_case';
+        $parent_file  = 'direktt-dashboard';
+    } elseif ( ( $pagenow === 'edit-tags.php' || $pagenow === 'term.php' ) && $current_screen->taxonomy === 'case_status' ) {
+        $submenu_file = 'edit-tags.php?taxonomy=case_status';
+        $parent_file  = 'direktt-dashboard';
+    }
 
-	return $parent_file;
+    return $parent_file;
 }
