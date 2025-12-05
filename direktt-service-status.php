@@ -1635,7 +1635,7 @@ function direktt_service_status_handle_direktt_search_service_cases_id() {
 	wp_die();
 }
 
-add_shortcode( 'direktt_service_case', 'direktt_service_status_add_service_case_shortcode' );
+add_shortcode( 'direktt_service_status', 'direktt_service_status_add_service_case_shortcode' );
 
 function direktt_service_status_add_service_case_shortcode() {
 	$direktt_user = Direktt_User::direktt_get_current_user();
