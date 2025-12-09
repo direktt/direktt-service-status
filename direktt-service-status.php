@@ -1022,6 +1022,7 @@ function direktt_service_status_render_profile_tool() {
 				$('.direktt-service-status-case-form h2').text('<?php echo esc_js( 'Add New Service Case', 'direktt-service-status' ); ?>');
 				$('#save-case-form').data('action', 'add');
 				$('.info-notice').remove();
+				$('.direktt-activity-log').hide();
 			});
 
 			$('#save-case-form').off('click').on('click', function(event) {
@@ -1143,6 +1144,7 @@ function direktt_service_status_render_profile_tool() {
 							$('#case-form-description').val(caseData.description);
 							$('#case-form-status').val(caseData.status);
 							$('.form-log-list').empty();
+							$('.direktt-activity-log').show();
 							var logEntry = '<table class="direktt-service-status-log">';
 								logEntry += '<thead>';
 									logEntry += '<th>';
@@ -1235,6 +1237,7 @@ function direktt_service_status_render_profile_tool() {
 							$('#case-form-description').val(caseData.description);
 							$('#case-form-status').val(caseData.status);
 							$('.form-log-list').empty();
+							$('.direktt-activity-log').show();
 							var logEntry = '<table class="direktt-service-status-log">';
 								logEntry += '<thead>';
 									logEntry += '<th>';
@@ -1433,9 +1436,7 @@ function direktt_service_status_render_profile_tool() {
 						<?php
 					}
 				} else {
-					?>
-					<h3><?php echo esc_html__( 'There are no open cases for this user.', 'direktt-service-status' ); ?></h3>
-					<?php
+					echo '<div class="notice notice-error"><p>' . esc_html__( 'No service cases found.', 'direktt-service-status' ) . '</p></div>';
 				}
 				?>
 			</div>
@@ -1469,8 +1470,10 @@ function direktt_service_status_render_profile_tool() {
 						<button id="save-case-form" class="button button-primary button-large"><?php echo esc_html__( 'Save Service Case', 'direktt-service-status' ); ?></button>
 						<button id="cancel-case-form" class="button-invert button-dark-gray"><?php echo esc_html__( 'Cancel', 'direktt-service-status' ); ?></button>
 					</div>
-					<h3><?php echo esc_html__( 'Activity log', 'direktt-service-status' ); ?></h3>
-					<div class="form-log-list"></div>
+					<div class="direktt-activity-log">
+						<h3><?php echo esc_html__( 'Activity log', 'direktt-service-status' ); ?></h3>
+						<div class="form-log-list"></div>
+					</div>
 					<input type="hidden" id="case-form-id" value="" />
 				</form>
 			</div>
@@ -2304,9 +2307,7 @@ function direktt_service_status_add_service_case_shortcode() {
 							<?php
 						}
 					} else {
-						?>
-						<h3><?php echo esc_html__( 'There are no open cases.', 'direktt-service-status' ); ?></h3>
-						<?php
+						echo '<div class="notice notice-error"><p>' . esc_html__( 'No service cases found.', 'direktt-service-status' ) . '</p></div>';
 					}
 					?>
 				</div>
