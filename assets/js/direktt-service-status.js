@@ -9,7 +9,7 @@ jQuery( document ).ready(
 				var id = $( '#dss_direktt_subscription_id_input' ).val();
 				if ( ! ids.includes( id ) ) {
 					e.preventDefault();
-					$( '.dsc-error-popup' ).fadeIn();
+					$( '.direktt-admin-popup' ).fadeIn();
 				}
 			}
 		);
@@ -29,7 +29,7 @@ jQuery( document ).ready(
 			'click',
 			function () {
 				event.preventDefault();
-				$( '.dsc-error-popup' ).fadeOut();
+				$( '.direktt-admin-popup' ).fadeOut();
 			}
 		);
 	}

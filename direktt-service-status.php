@@ -140,10 +140,11 @@ add_action( 'edit_form_after_title', 'direktt_service_status_add_popup' );
 function direktt_service_status_add_popup( $post ) {
 	if ( 'direktt_service_case' === $post->post_type ) {
 		?>
-		<div class="dsc-error-popup">
-			<div class="dsc-error-popup-content">
-				<p class="dsc-error-text"><?php echo esc_html__( 'Please enter valid Subscription ID.', 'direktt-service-status' ); ?></p>
-				<button id="close-dsc-form-error"><?php echo esc_html__( 'Close', 'direktt-service-status' ); ?></button>
+		<div class="direktt-admin-popup">
+			<div class="direktt-admin-popup-content">
+				<h3 class="direktt-admin-popup-title"><?php echo esc_html__( 'Error', 'direktt-service-status' ); ?></h3>
+				<p class="direktt-admin-popup-text"><?php echo esc_html__( 'Please enter valid Subscription ID.', 'direktt-service-status' ); ?></p>
+				<button id="close-direktt-admin" class="button"><?php echo esc_html__( 'Close', 'direktt-service-status' ); ?></button>
 			</div>
 		</div>
 		<?php
@@ -188,7 +189,7 @@ function direktt_service_status_subscription_id_meta_box_callback( $post ) {
 	}
 
 	?>
-	<label for="dss_direktt_subscription_id_input"><?php echo esc_html__( 'Enter the ID:', 'direktt-service-status' ); ?></label>
+	<!--label for="dss_direktt_subscription_id_input"><?php echo esc_html__( 'Enter the ID:', 'direktt-service-status' ); ?></label--!>
 	<input type="text" id="dss_direktt_subscription_id_input" name="dss_direktt_subscription_id_input" value="<?php echo esc_attr( $subscription_id ); ?>" placeholder="<?php echo esc_attr__( 'Enter the ID...', 'direktt-service-status' ); ?>" />
 	<?php wp_nonce_field( 'dss_direktt_subscription_id_nonce_action', 'dss_direktt_subscription_id_nonce' ); ?>
 	<input type="hidden" id="dss_all_ids" name="dss_all_ids" value="<?php echo esc_attr( wp_json_encode( array_values( array_map( 'strval', $all_ids ) ) ) ); ?>" />
