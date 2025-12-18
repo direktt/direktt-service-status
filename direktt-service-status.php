@@ -144,6 +144,9 @@ function direktt_service_status_add_popup( $post ) {
 			<div class="direktt-admin-popup-content">
 				<h3 class="direktt-admin-popup-title"><?php echo esc_html__( 'Error', 'direktt-service-status' ); ?></h3>
 				<p class="direktt-admin-popup-text"><?php echo esc_html__( 'Please enter valid Subscription ID.', 'direktt-service-status' ); ?></p>
+				<div class="direktt-admin-popup-error"><p><?php echo esc_html__( 'Invalid ID!', 'direktt-service-status' ); ?></p></div>
+				<input type="text" id="dss_direktt_subscription_id_input_alert" name="dss_direktt_subscription_id_input_alert" placeholder="<?php echo esc_attr__( 'Start typing (autocomplete enabled)', 'direktt-service-status' ); ?>" />
+				<button id="direktt-service-status-publish" class="button button-primary button-large"><?php echo esc_html__( 'Confirm', 'direktt-service-status' ); ?></button>
 				<button id="close-direktt-admin" class="button"><?php echo esc_html__( 'Close', 'direktt-service-status' ); ?></button>
 			</div>
 		</div>
@@ -156,16 +159,16 @@ add_action( 'add_meta_boxes', 'direktt_service_status_add_meta_boxes' );
 function direktt_service_status_add_meta_boxes() {
 	add_meta_box(
 		'dss_direktt_subscription_id',
-		esc_html__( 'Subscription ID', 'direktt-service-status' ),
+		esc_html__( 'Assign the case to a user', 'direktt-service-status' ),
 		'direktt_service_status_subscription_id_meta_box_callback',
 		'direktt_service_case',
-		'side',
+		'normal',
 		'default'
 	);
 
 	add_meta_box(
 		'dss_direktt_service_status_change_log',
-		esc_html__( 'Service Status Change Log', 'direktt-service-status' ),
+		esc_html__( 'Change Log', 'direktt-service-status' ),
 		'direktt_service_status_change_log_meta_box_callback',
 		'direktt_service_case',
 		'normal',
@@ -189,10 +192,19 @@ function direktt_service_status_subscription_id_meta_box_callback( $post ) {
 	}
 
 	?>
-	<!--label for="dss_direktt_subscription_id_input"><?php echo esc_html__( 'Enter the ID:', 'direktt-service-status' ); ?></label--!>
-	<input type="text" id="dss_direktt_subscription_id_input" name="dss_direktt_subscription_id_input" value="<?php echo esc_attr( $subscription_id ); ?>" placeholder="<?php echo esc_attr__( 'Enter the ID...', 'direktt-service-status' ); ?>" />
-	<?php wp_nonce_field( 'dss_direktt_subscription_id_nonce_action', 'dss_direktt_subscription_id_nonce' ); ?>
-	<input type="hidden" id="dss_all_ids" name="dss_all_ids" value="<?php echo esc_attr( wp_json_encode( array_values( array_map( 'strval', $all_ids ) ) ) ); ?>" />
+	<table class="form-table">
+		<tr>
+			<th scope="row">
+				<label for="dss_direktt_subscription_id_input"><?php echo esc_html__( 'Subscription ID', 'direktt-service-status' ); ?></label>
+			</th>
+			<td>
+				<input type="text" id="dss_direktt_subscription_id_input" name="dss_direktt_subscription_id_input" value="<?php echo esc_attr( $subscription_id ); ?>" placeholder="<?php echo esc_attr__( 'Start typing (autocomplete enabled)', 'direktt-service-status' ); ?>" />
+				<p class="description"><?php echo esc_html__( 'Enter the Subscription ID of the user associated with the case', 'direktt-service-status' ); ?></p>
+				<?php wp_nonce_field( 'dss_direktt_subscription_id_nonce_action', 'dss_direktt_subscription_id_nonce' ); ?>
+				<input type="hidden" id="dss_all_ids" name="dss_all_ids" value="<?php echo esc_attr( wp_json_encode( array_values( array_map( 'strval', $all_ids ) ) ) ); ?>" />
+			</td>
+		</tr>
+	</table>
 	<?php
 }
 
@@ -205,7 +217,7 @@ function direktt_service_status_change_log_meta_box_callback( $post ) {
 	}
 
 	if ( ! empty( $log ) && is_array( $log ) ) {
-		echo '<table class="widefat">';
+		echo '<table class="widefat striped">';
 		echo '<thead>';
 			echo '<tr>';
 				echo '<th>';
@@ -259,7 +271,7 @@ function direktt_service_status_change_log_meta_box_callback( $post ) {
 						echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
 					echo '</td>';
 					echo '<td>';
-						echo esc_html( '/' );
+						echo esc_html( '-' );
 					echo '</td>';
 					echo '<td>';
 						echo esc_html( $status );
@@ -270,7 +282,9 @@ function direktt_service_status_change_log_meta_box_callback( $post ) {
 			echo '</tbody>';
 		echo '</table>';
 	} else {
+		echo '<div class="direktt-service-status-empty-log">';
 		echo '<p>' . esc_html__( 'No status changes logged.', 'direktt-service-status' ) . '</p>';
+		echo '</div>';
 	}
 }
 
@@ -1191,7 +1205,7 @@ function direktt_service_status_render_profile_tool() {
 												logEntry += entry.date;
 											logEntry += '</td>';
 											logEntry += '<td>';
-												logEntry += '/';
+												logEntry += '-';
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += status;
@@ -1285,7 +1299,7 @@ function direktt_service_status_render_profile_tool() {
 												logEntry += entry.date;
 											logEntry += '</td>';
 											logEntry += '<td>';
-												logEntry += '/';
+												logEntry += '-';
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += status;
@@ -1356,7 +1370,7 @@ function direktt_service_status_render_profile_tool() {
 						?>
 						<div class="case-item">
 							<h3><?php echo esc_html( $case->post_title ); ?></h3>
-							<div class="direktt-service-status-description"><strong><?php echo esc_html__( 'Description:', 'direktt-service-status' ); ?> </strong><?php echo esc_html( $case->post_content ? wp_trim_words( $case->post_content, 10, '...' ) : '/' ); ?></div>
+							<div class="direktt-service-status-description"><strong><?php echo esc_html__( 'Description:', 'direktt-service-status' ); ?> </strong><?php echo esc_html( $case->post_content ? wp_trim_words( $case->post_content, 10, '...' ) : '-' ); ?></div>
 							<div class="direktt-service-status-status"><strong><?php echo esc_html__( 'Status:', 'direktt-service-status' ); ?> </strong><?php echo esc_html( $case_status ); ?></div>
 							<?php
 							if ( ! empty( get_post_meta( $case_id, 'direktt_service_status_change_log', true ) ) ) {
@@ -1420,7 +1434,7 @@ function direktt_service_status_render_profile_tool() {
 												echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
 											echo '</td>';
 											echo '<td>';
-												echo esc_html( '/' );
+												echo esc_html( '-' );
 											echo '</td>';
 											echo '<td>';
 												echo esc_html( $status );
@@ -2031,7 +2045,7 @@ function direktt_service_status_add_service_case_shortcode() {
 													logEntry += entry.date;
 												logEntry += '</td>';
 												logEntry += '<td>';
-													logEntry += '/';
+													logEntry += '-';
 												logEntry += '</td>';
 												logEntry += '<td>';
 													logEntry += status;
@@ -2126,7 +2140,7 @@ function direktt_service_status_add_service_case_shortcode() {
 												logEntry += entry.date;
 											logEntry += '</td>';
 											logEntry += '<td>';
-												logEntry += '/';
+												logEntry += '-';
 											logEntry += '</td>';
 											logEntry += '<td>';
 												logEntry += status;
@@ -2231,7 +2245,7 @@ function direktt_service_status_add_service_case_shortcode() {
 								<h3><?php echo esc_html( $case->post_title ); ?></h3>
 								<div div class="direktt-service-status-user"><strong><?php echo esc_html__( 'User:', 'direktt-service-status' ); ?> </strong><span><?php echo esc_html( $display_name ); ?></span></div>
 								<div div class="direktt-service-status-user-id"><strong><?php echo esc_html__( 'User Id:', 'direktt-service-status' ); ?> </strong><span><?php echo esc_html( $case_user_id ); ?></span></div>
-								<div div class="direktt-service-status-description"><strong><?php echo esc_html__( 'Description:', 'direktt-service-status' ); ?> </strong><span><?php echo esc_html( $case->post_content ? wp_trim_words( $case->post_content, 10, '...' ) : '/' ); ?></span></div>
+								<div div class="direktt-service-status-description"><strong><?php echo esc_html__( 'Description:', 'direktt-service-status' ); ?> </strong><span><?php echo esc_html( $case->post_content ? wp_trim_words( $case->post_content, 10, '...' ) : '-' ); ?></span></div>
 								<div div class="direktt-service-status-status"><strong><?php echo esc_html__( 'Status:', 'direktt-service-status' ); ?> </strong><?php echo esc_html( $case_status ); ?></div>
 								<?php
 								if ( ! empty( get_post_meta( $case_id, 'direktt_service_status_change_log', true ) ) ) {
@@ -2293,7 +2307,7 @@ function direktt_service_status_add_service_case_shortcode() {
 												echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
 											echo '</td>';
 											echo '<td>';
-												echo esc_html( '/' );
+												echo esc_html( '-' );
 											echo '</td>';
 											echo '<td>';
 												echo esc_html( $status );
@@ -2409,7 +2423,7 @@ function direktt_service_status_add_service_case_shortcode() {
 			?>
 			<div class="case-item my-case-item">
 				<h3><?php echo esc_html( $my_case->post_title ); ?></h3>
-				<div class="direktt-service-status-description"><strong><?php echo esc_html__( 'Description:', 'direktt-service-status' ); ?> </strong><?php echo esc_html( $my_case->post_content ? wp_trim_words( $my_case->post_content, 10, '...' ) : '/' ); ?></div>
+				<div class="direktt-service-status-description"><strong><?php echo esc_html__( 'Description:', 'direktt-service-status' ); ?> </strong><?php echo esc_html( $my_case->post_content ? wp_trim_words( $my_case->post_content, 10, '...' ) : '-' ); ?></div>
 				<div class="direktt-service-status-status"><strong><?php echo esc_html__( 'Status:', 'direktt-service-status' ); ?> </strong><?php echo esc_html( $my_case_status ); ?></div>
 				<?php
 				if ( ! empty( get_post_meta( $my_case_id, 'direktt_service_status_change_log', true ) ) ) {
@@ -2455,7 +2469,7 @@ function direktt_service_status_add_service_case_shortcode() {
 									echo esc_html( human_time_diff( strtotime( $entry['date'] ) ) . ' ago' );
 								echo '</td>';
 								echo '<td>';
-									echo esc_html( '/' );
+									echo esc_html( '-' );
 								echo '</td>';
 								echo '<td>';
 									echo esc_html( $status );

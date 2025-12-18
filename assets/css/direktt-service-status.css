@@ -1,0 +1,20 @@
+#dss_direktt_service_status_change_log:has(.direktt-service-status-empty-log) {
+    display: none;
+}
+
+#dss_direktt_service_status_change_log .inside {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#dss_direktt_service_status_change_log .inside table {
+    border: none !important;
+}
+
+.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
+    z-index: 10000;
+}
+
+.direktt-admin-popup-error {
+    display: none;
+}
