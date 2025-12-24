@@ -414,7 +414,7 @@ function direktt_service_status_register_case_status_taxonomy() {
 	);
 
 	$args = array(
-		'hierarchical'      => true,
+		'hierarchical'      => false,
 		'labels'            => $labels,
 		'show_ui'           => true,
 		'show_admin_column' => true,
